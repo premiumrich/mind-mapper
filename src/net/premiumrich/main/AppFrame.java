@@ -1,6 +1,8 @@
 package net.premiumrich.main;
 
 import java.awt.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 
 import javax.swing.*;
 
@@ -24,6 +26,7 @@ public class AppFrame extends JFrame {
 		this.setLayout(new BorderLayout());
 		
 		initComponents();
+		initListeners();
 	}
 	
 	private void initComponents() {
@@ -32,9 +35,18 @@ public class AppFrame extends JFrame {
 		
 		canvasPanel = new CanvasPanel();
 		this.add(canvasPanel, BorderLayout.CENTER);
+		canvasPanel.updateCenter();
 		
 		menubar = new MainMenubar();
 		this.add(menubar, BorderLayout.NORTH);
+	}
+	
+	private void initListeners() {
+		this.addComponentListener(new ComponentAdapter() {
+			public void componentResized(ComponentEvent e) {
+				canvasPanel.updateCenter();
+			}
+		});
 	}
 
 }
