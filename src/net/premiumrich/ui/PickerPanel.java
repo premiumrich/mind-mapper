@@ -38,6 +38,11 @@ public class PickerPanel extends JPanel {
 		this.add(dDragXLbl);
 		dDragYLbl = new JLabel();
 		this.add(dDragYLbl);
+		
+		tempXLbl = new JLabel();
+		this.add(tempXLbl);
+		tempYLbl = new JLabel();
+		this.add(tempYLbl);
 	}
 	
 }

@@ -3,8 +3,12 @@ package net.premiumrich.ui;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.AffineTransform;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.*;
+
+import net.premiumrich.shapes.*;
 
 public class CanvasPanel extends JPanel {
 	
@@ -23,7 +27,11 @@ public class CanvasPanel extends JPanel {
 	private int yDiff;
 	private Point startPoint;
 	
+	private List<MapShape> shapes;
+	
 	public CanvasPanel() {
+		shapes = new ArrayList<MapShape>();
+		
 		initComponents();
 	}
 	
@@ -31,6 +39,9 @@ public class CanvasPanel extends JPanel {
 		initListeners();
 		
 		centerPoint = new Point();
+		
+		shapes.add(new RectangleShape(50, 50, 100, 200));
+		shapes.add(new EllipseShape(200, 200, 100, 100));
 		
 		initDebugLabels();
 	}
@@ -41,6 +52,8 @@ public class CanvasPanel extends JPanel {
 		PickerPanel.mouseYLbl.setText("Mouse Y: " + MouseInfo.getPointerInfo().getLocation().y);
 		PickerPanel.dDragXLbl.setText("Δ Drag X: " + xDiff);
 		PickerPanel.dDragYLbl.setText("Δ Drag Y: " + yDiff);
+		PickerPanel.tempXLbl.setText("X: " + shapes.get(0).getX());
+		PickerPanel.tempYLbl.setText("Y: " + shapes.get(0).getY());
 	}
 	
 	@Override
@@ -86,10 +99,12 @@ public class CanvasPanel extends JPanel {
     		PickerPanel.dDragYLbl.setText("Δ Drag Y: " + yDiff);
         }
 		
-		g2d.fill(new Rectangle(50, 50, 100, 200));
+		for (MapShape mapShape : shapes) {		// Iterate and print all shapes
+			g2d.fill(mapShape.getShape());
+		}
 	}
 
-	public void updateCenter() {
+	public void updateCenter() {				// Find center of canvas
 		centerPoint.setLocation(this.getWidth()/2, this.getHeight()/2);
 	}
 	
@@ -126,6 +141,9 @@ public class CanvasPanel extends JPanel {
 				
 				PickerPanel.mouseXLbl.setText("Mouse X: " + MouseInfo.getPointerInfo().getLocation().x);
 				PickerPanel.mouseYLbl.setText("Mouse Y: " + MouseInfo.getPointerInfo().getLocation().y);
+				
+				PickerPanel.tempXLbl.setText("X: " + shapes.get(0).getX());
+				PickerPanel.tempYLbl.setText("Y: " + shapes.get(0).getY());
 			}
 		});
 		
