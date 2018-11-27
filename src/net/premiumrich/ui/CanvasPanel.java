@@ -14,8 +14,12 @@ public class CanvasPanel extends JPanel {
 	
 	private static final long serialVersionUID = 0;
 
+	private long lastFrameTime = 0;
+	private static final int MAX_FPS = 60;
+	
 	private Point centerPoint;
 	
+	// Zoom and pan variables
 	private double zoomFactor = 1;
 	private double prevZoomFactor = 1;
 	private boolean zooming;
@@ -44,9 +48,11 @@ public class CanvasPanel extends JPanel {
 		shapes.add(new EllipseShape(200, 200, 100, 100));
 		
 		initDebugLabels();
+		initTimers();
 	}
 	
 	private void initDebugLabels() {
+		PickerPanel.fpsLbl.setText("FPS: " + 1000/(System.currentTimeMillis()-lastFrameTime));
 		PickerPanel.zoomLbl.setText("Zoom: " + zoomFactor);
 		PickerPanel.mouseXLbl.setText("Mouse X: " + MouseInfo.getPointerInfo().getLocation().x);
 		PickerPanel.mouseYLbl.setText("Mouse Y: " + MouseInfo.getPointerInfo().getLocation().y);
@@ -114,22 +120,17 @@ public class CanvasPanel extends JPanel {
 				zooming = true;
 				if (e.getWheelRotation() < 0) {		// Zoom in
 				    zoomFactor *= 1.1;
-				    repaint();
+				    handleRepaint();
 				}
 				if (e.getWheelRotation() > 0) {		// Zoom out
 				    zoomFactor /= 1.1;
-				    repaint();
+				    handleRepaint();
 				}
 				PickerPanel.zoomLbl.setText("Zoom: " + Double.toString(Math.round(zoomFactor*100)/100.0));
 			}
 		});
 		
 		this.addMouseMotionListener(new MouseAdapter() {
-			public void mouseMoved(MouseEvent e) {
-				PickerPanel.mouseXLbl.setText("Mouse X: " + MouseInfo.getPointerInfo().getLocation().x);
-				PickerPanel.mouseYLbl.setText("Mouse Y: " + MouseInfo.getPointerInfo().getLocation().y);
-			}
-			
 			public void mouseDragged(MouseEvent e) {
 				dragging = true;
 				
@@ -137,10 +138,7 @@ public class CanvasPanel extends JPanel {
 				xDiff = curPoint.x - startPoint.x;
 				yDiff = curPoint.y - startPoint.y;
 				
-				repaint();
-				
-				PickerPanel.mouseXLbl.setText("Mouse X: " + MouseInfo.getPointerInfo().getLocation().x);
-				PickerPanel.mouseYLbl.setText("Mouse Y: " + MouseInfo.getPointerInfo().getLocation().y);
+				handleRepaint();
 				
 				PickerPanel.tempXLbl.setText("X: " + shapes.get(0).getX());
 				PickerPanel.tempYLbl.setText("Y: " + shapes.get(0).getY());
@@ -155,9 +153,37 @@ public class CanvasPanel extends JPanel {
 
 			public void mouseReleased(MouseEvent e) {
 				released = true;
-				repaint();
+				repaint();		// Bypass FPS limiter and force repaint to lock in position
 			}
 		});
+	}
+	
+	private void handleRepaint() {		// A handler to limit framerate and CPU usage
+		// Calculate frame time
+		if (System.currentTimeMillis() - lastFrameTime >= (1000/MAX_FPS)) {
+			lastFrameTime = System.currentTimeMillis();
+			repaint();
+		}
+	}
+	
+	private void initTimers() {
+		Timer fpsCounterUpdater = new Timer(250, new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (System.currentTimeMillis() - lastFrameTime != 0)
+					PickerPanel.fpsLbl.setText("FPS: " + 1000/(System.currentTimeMillis()-lastFrameTime));
+			}
+		});
+		fpsCounterUpdater.start();
+		
+		Timer mousePositionUpdater = new Timer(100, new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				PickerPanel.mouseXLbl.setText("Mouse X: " + MouseInfo.getPointerInfo().getLocation().x);
+				PickerPanel.mouseYLbl.setText("Mouse Y: " + MouseInfo.getPointerInfo().getLocation().y);
+			}
+		});
+		mousePositionUpdater.start();
 	}
 	
 }

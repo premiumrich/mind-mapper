@@ -9,13 +9,14 @@ public class PickerPanel extends JPanel {
 
 	private static final long serialVersionUID = 0;
 	
-	static JLabel zoomLbl;
+	static JLabel fpsLbl;
 	static JLabel mouseXLbl;
 	static JLabel mouseYLbl;
-	static JLabel tempXLbl;
-	static JLabel tempYLbl;
+	static JLabel zoomLbl;
 	static JLabel dDragXLbl;
 	static JLabel dDragYLbl;
+	static JLabel tempXLbl;
+	static JLabel tempYLbl;
 	
 	public PickerPanel() {
 		this.setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
@@ -26,6 +27,9 @@ public class PickerPanel extends JPanel {
 	}
 	
 	private void initComponents() {
+		fpsLbl = new JLabel();
+		this.add(fpsLbl);
+		
 		mouseXLbl = new JLabel();
 		this.add(mouseXLbl);
 		mouseYLbl = new JLabel();
