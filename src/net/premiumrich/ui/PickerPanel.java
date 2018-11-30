@@ -13,6 +13,8 @@ public class PickerPanel extends JPanel {
 	static JLabel mouseXLbl;
 	static JLabel mouseYLbl;
 	static JLabel zoomLbl;
+	static JLabel xOffsetLbl;
+	static JLabel yOffsetLbl;
 	static JLabel dDragXLbl;
 	static JLabel dDragYLbl;
 	static JLabel tempXLbl;
@@ -37,6 +39,11 @@ public class PickerPanel extends JPanel {
 		
 		zoomLbl = new JLabel();
 		this.add(zoomLbl);
+		
+		xOffsetLbl = new JLabel();
+		this.add(xOffsetLbl);
+		yOffsetLbl = new JLabel();
+		this.add(yOffsetLbl);
 		
 		dDragXLbl = new JLabel();
 		this.add(dDragXLbl);

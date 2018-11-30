@@ -12,10 +12,10 @@ public class AppFrame extends JFrame {
 
 	private static final long serialVersionUID = 0;
 	
-	private MainMenubar menubar;
+	private static MainMenubar menubar;
 
-	private PickerPanel pickerPanel;
-	private CanvasPanel canvasPanel;
+	private static PickerPanel pickerPanel;
+	private static CanvasPanel canvasPanel;
 	
 	public AppFrame() {
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
