@@ -12,7 +12,7 @@ public class MindMapReader {
 	private JsonObject data;
 	
 	public MindMapReader(File inFile) {
-		System.out.print("Opening " + inFile.getAbsolutePath() + " ...");
+		System.out.print("Opening " + inFile.getAbsolutePath() + " ... ");
 		try {
 			reader = new JsonReader(new FileReader(inFile));
 			data = gson.fromJson(reader, JsonObject.class);

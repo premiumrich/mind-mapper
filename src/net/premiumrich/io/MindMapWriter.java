@@ -20,7 +20,7 @@ public class MindMapWriter {
 	}
 	
 	public void save() {
-		System.out.print("Saving to " + outFile.getAbsolutePath() + " ...");
+		System.out.print("Saving to " + outFile.getAbsolutePath() + " ... ");
 		try {
 			PrintWriter p = new PrintWriter(new FileWriter(outFile));
 			p.write(gson.toJson(output));

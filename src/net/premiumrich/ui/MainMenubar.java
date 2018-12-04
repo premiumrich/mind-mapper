@@ -10,13 +10,17 @@ public class MainMenubar extends JMenuBar {
 	private static final long serialVersionUID = 0;
 	
 	private JMenu fileMenu;
+	private JMenuItem fileOpenMenuItem;
+	private JMenuItem fileSaveMenuItem;
+	
 	private JMenu editMenu;
+	private JMenu editAddMenu;
+	private JMenuItem editAddEllipseMenuItem;
+	private JMenuItem editAddRectangleMenuItem;
+	
 	private JMenu viewMenu;
 	private JMenu windowMenu;
 	private JMenu helpMenu;
-	
-	private JMenuItem fileOpenMenuItem;
-	private JMenuItem fileSaveMenuItem;
 	
 	public MainMenubar() {
 		initFileMenu();
@@ -52,6 +56,8 @@ public class MainMenubar extends JMenuBar {
 	private void initEditMenu() {
 		editMenu = new JMenu("Edit");
 		this.add(editMenu);
+		
+		editMenu.add(new ContextMenu().getAddMenu());
 	}
 	
 	private void initViewMenu() {
