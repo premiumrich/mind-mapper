@@ -5,6 +5,8 @@ import java.awt.event.ActionListener;
 
 import javax.swing.*;
 
+import net.premiumrich.io.IOHandler;
+
 public class MainMenubar extends JMenuBar {
 
 	private static final long serialVersionUID = 0;
@@ -14,9 +16,6 @@ public class MainMenubar extends JMenuBar {
 	private JMenuItem fileSaveMenuItem;
 	
 	private JMenu editMenu;
-	private JMenu editAddMenu;
-	private JMenuItem editAddEllipseMenuItem;
-	private JMenuItem editAddRectangleMenuItem;
 	
 	private JMenu viewMenu;
 	private JMenu windowMenu;
@@ -38,7 +37,7 @@ public class MainMenubar extends JMenuBar {
 		fileOpenMenuItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				CanvasPanel.handleOpen();
+				IOHandler.handleOpen();
 			}
 		});
 		fileMenu.add(fileOpenMenuItem);
@@ -47,7 +46,7 @@ public class MainMenubar extends JMenuBar {
 		fileSaveMenuItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				CanvasPanel.handleSave();
+				IOHandler.handleSave();
 			}
 		});
 		fileMenu.add(fileSaveMenuItem);
