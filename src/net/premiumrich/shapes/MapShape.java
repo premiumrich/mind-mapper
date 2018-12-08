@@ -16,14 +16,15 @@ public abstract class MapShape {
 	private Color fontColour;
 	public boolean isHighlighted = false;
 	
-	public MapShape(Shape shape, int x, int y) {
+	public MapShape(Shape shape) {
 		this.shape = shape;
-		this.x = x;
-		this.y = y;
+		this.x = shape.getBounds().x;
+		this.y = shape.getBounds().y;
+		// Defaults
 		borderColour = Color.black;
 		text = "Example";
 		textFont = new Font("Serif", Font.PLAIN, 12);
-		setFontColour(Color.black);
+		fontColour = Color.black;
 	}
 	
 	// Getters and setters
@@ -66,7 +67,6 @@ public abstract class MapShape {
 	public void setFontColour(Color fontColour) {
 		this.fontColour = fontColour;
 	}
-
 	public JsonObject getAsJsonObj() {
 		JsonObject thisShape = new JsonObject();
 		thisShape.addProperty("Type", this.getClass().getName());
@@ -74,6 +74,12 @@ public abstract class MapShape {
 		thisShape.addProperty("Y", y);
 		thisShape.addProperty("Width", shape.getBounds().getWidth());
 		thisShape.addProperty("Height", shape.getBounds().getHeight());
+		thisShape.addProperty("Border colour", "#"+Integer.toHexString(borderColour.getRGB()).substring(2));
+		thisShape.addProperty("Text", text);
+		thisShape.addProperty("Text font name", textFont.getName());
+		thisShape.addProperty("Text font style", textFont.getStyle());
+		thisShape.addProperty("Text font size", textFont.getSize());
+		thisShape.addProperty("Font colour", "#"+Integer.toHexString(fontColour.getRGB()).substring(2));
 		return thisShape;
 	}
 

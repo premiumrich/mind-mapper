@@ -6,8 +6,9 @@ import java.awt.event.ActionListener;
 import javax.swing.*;
 
 import net.premiumrich.io.IOHandler;
+import net.premiumrich.main.AppFrame;
 
-public class MainMenubar extends JMenuBar {
+public class Menubar extends JMenuBar {
 
 	private static final long serialVersionUID = 0;
 	
@@ -21,7 +22,7 @@ public class MainMenubar extends JMenuBar {
 	private JMenu windowMenu;
 	private JMenu helpMenu;
 	
-	public MainMenubar() {
+	public Menubar() {
 		initFileMenu();
 		initEditMenu();
 		initViewMenu();
@@ -37,7 +38,8 @@ public class MainMenubar extends JMenuBar {
 		fileOpenMenuItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				IOHandler.handleOpen();
+				IOHandler io = new IOHandler(AppFrame.canvasPanel);
+				io.handleOpen();
 			}
 		});
 		fileMenu.add(fileOpenMenuItem);
@@ -46,7 +48,8 @@ public class MainMenubar extends JMenuBar {
 		fileSaveMenuItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				IOHandler.handleSave();
+				IOHandler io = new IOHandler(AppFrame.canvasPanel);
+				io.handleSave();
 			}
 		});
 		fileMenu.add(fileSaveMenuItem);

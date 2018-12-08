@@ -1,8 +1,6 @@
 package net.premiumrich.main;
 
 import java.awt.*;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 
 import javax.swing.*;
 
@@ -12,10 +10,9 @@ public class AppFrame extends JFrame {
 
 	private static final long serialVersionUID = 0;
 	
-	private static MainMenubar menubar;
-
-	private static PickerPanel pickerPanel;
-	private static CanvasPanel canvasPanel;
+	public static Menubar menubar;
+	public static PickerPanel pickerPanel;
+	public static CanvasPanel canvasPanel;
 	
 	public AppFrame() {
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -35,7 +32,7 @@ public class AppFrame extends JFrame {
 		canvasPanel = new CanvasPanel();
 		this.add(canvasPanel, BorderLayout.CENTER);
 		
-		menubar = new MainMenubar();
+		menubar = new Menubar();
 		this.add(menubar, BorderLayout.NORTH);
 	}
 
