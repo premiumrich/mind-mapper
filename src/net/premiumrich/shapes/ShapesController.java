@@ -103,6 +103,20 @@ public class ShapesController {
 		canvasInstance.repaint();
 	}
 	
+	public void changeFontStyle(ActionEvent e) {
+		// Offset cursor to be consistent with shape location
+		Point offsetCursor = canvasInstance.contextTriggerEvent.getPoint();
+		offsetCursor.translate(-(int)viewport.xOffset, -(int)viewport.yOffset);
+		for (MapShape shape : shapes) {
+			if (shape.getShape().getBounds().contains(offsetCursor)) {
+				shape.setTextFont(new Font(shape.getTextFont().getFontName(), 
+									Integer.parseInt(e.getActionCommand()), 
+									shape.getTextFont().getSize()));
+			}
+		}
+		canvasInstance.repaint();
+	}
+	
 	public void changeFontSize(ActionEvent e) {
 		// Offset cursor to be consistent with shape location
 		Point offsetCursor = canvasInstance.contextTriggerEvent.getPoint();
@@ -148,12 +162,13 @@ public class ShapesController {
 		for (JsonElement shape : shapesData) {
 			JsonObject thisShape = shape.getAsJsonObject();
 			try {
+				// Create new MapShape from Json string using Java reflection
 				Class<?> newMapShapeClass = Class.forName(thisShape.get("Type").getAsString());
-				Class<?>[] types = {int.class, int.class, int.class, int.class};
-				Constructor<?> constructor = newMapShapeClass.getConstructor(types);
-				Object[] parameters = {thisShape.get("X").getAsInt(), thisShape.get("Y").getAsInt(), 
+				Constructor<?> newMapShapeConstructor = newMapShapeClass.getConstructor(
+						new Class<?>[] {int.class, int.class, int.class, int.class});
+				Object[] newMapShapeParameters = {thisShape.get("X").getAsInt(), thisShape.get("Y").getAsInt(), 
 										thisShape.get("Width").getAsInt(), thisShape.get("Height").getAsInt()};
-				MapShape newMapShape = (MapShape)constructor.newInstance(parameters);
+				MapShape newMapShape = (MapShape)newMapShapeConstructor.newInstance(newMapShapeParameters);
 				
 				newMapShape.setBorderColour(Color.decode(thisShape.get("Border colour").getAsString()));
 				newMapShape.setText(thisShape.get("Text").getAsString());

@@ -47,8 +47,16 @@ public class ContextMenu extends JPopupMenu {
 		fonts.put("Courier", "Monospaced");
 	}
 	
+	private JMenu changeFontStyleMenu;
+	public static final HashMap<String,Integer> fontStyles = new HashMap<String,Integer>();
+	static {
+		fontStyles.put("Plain", 0);
+		fontStyles.put("Bold", 1);
+		fontStyles.put("Italic", 2);
+	}
+	
 	private JMenu changeFontSizeMenu;
-	private static final int fontSizes[] = {10, 11, 12, 14, 16, 18, 24};
+	public static final int fontSizes[] = {10, 11, 12, 14, 16, 18, 24};
 	
 	public ContextMenu() {
 		initAddMenu();
@@ -121,6 +129,22 @@ public class ContextMenu extends JPopupMenu {
 				}
 			});
 			changeFontMenu.add(selectFont);
+		}
+		
+		changeFontStyleMenu = new JMenu("Font style");
+		editMenu.add(changeFontStyleMenu);
+		// Iterate through available font styles and create a new menu item for each
+		for (String fontStyle : fontStyles.keySet()) {
+			JMenuItem selectFontStyle = new JMenuItem(fontStyle);
+			selectFontStyle.setActionCommand(fontStyles.get(fontStyle).toString());
+			selectFontStyle.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					AppFrame.canvasPanel.getShapesController().changeFontStyle(e);
+					AppFrame.canvasPanel.isContextTrigger = false;
+				}
+			});
+			changeFontStyleMenu.add(selectFontStyle);
 		}
 		
 		changeFontSizeMenu = new JMenu("Font size");
