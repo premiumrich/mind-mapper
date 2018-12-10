@@ -10,6 +10,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import javax.swing.JSlider;
+import javax.swing.event.ChangeEvent;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -25,11 +28,13 @@ public class ShapesController {
 	
 	private List<MapShape> shapes;
 	private MapShape highlightedShape;
+	private List<MapLine> lines;
 	
 	public ShapesController(CanvasPanel canvasInstance, Viewport viewport) {
 		this.canvasInstance = canvasInstance;
 		this.viewport = viewport;
 		shapes = new ArrayList<MapShape>();
+		lines = new ArrayList<MapLine>();
 	}
 	
 	public void addShape(ActionEvent e) {
@@ -40,8 +45,8 @@ public class ShapesController {
 			yGen = canvasInstance.contextTriggerEvent.getY() - viewport.yOffset;
 		} else {
 			Random rand = new Random();
-			xGen = rand.nextInt(canvasInstance.getWidth() - 200) + 200;
-			yGen = rand.nextInt(canvasInstance.getHeight() - 100) + 100;
+			xGen = rand.nextInt(canvasInstance.getWidth());
+			yGen = rand.nextInt(canvasInstance.getHeight());
 		}
 		switch (e.getActionCommand()) {
 		case "Ellipse":
@@ -73,6 +78,18 @@ public class ShapesController {
 					.contains(offsetCursor.getX(), offsetCursor.getY())) {
 				shapes.remove(shape);
 				break;
+			}
+		}
+		canvasInstance.repaint();
+	}
+	
+	public void changeBorderWidth(ChangeEvent e) {
+		// Offset cursor to be consistent with shape location
+		Point offsetCursor = canvasInstance.contextTriggerEvent.getPoint();
+		offsetCursor.translate(-(int)viewport.xOffset, -(int)viewport.yOffset);
+		for (MapShape shape : shapes) {
+			if (shape.getShape().getBounds().contains(offsetCursor)) {
+				shape.setBorderWidth(((JSlider)e.getSource()).getValue());
 			}
 		}
 		canvasInstance.repaint();
@@ -117,7 +134,7 @@ public class ShapesController {
 		canvasInstance.repaint();
 	}
 	
-	public void changeFontSize(ActionEvent e) {
+	public void changeFontSize(int newFontSize) {
 		// Offset cursor to be consistent with shape location
 		Point offsetCursor = canvasInstance.contextTriggerEvent.getPoint();
 		offsetCursor.translate(-(int)viewport.xOffset, -(int)viewport.yOffset);
@@ -125,7 +142,7 @@ public class ShapesController {
 			if (shape.getShape().getBounds().contains(offsetCursor)) {
 				shape.setTextFont(new Font(shape.getTextFont().getFontName(), 
 									shape.getTextFont().getStyle(), 
-									Integer.parseInt(e.getActionCommand())));
+									newFontSize));
 			}
 		}
 		canvasInstance.repaint();
@@ -141,6 +158,10 @@ public class ShapesController {
 			}
 		}
 		canvasInstance.repaint();
+	}
+	
+	public void newConnection(MapShape origin, MapShape termination) {
+		lines.add(new MapLine(origin, termination));
 	}
 	
 	// Getters and setters
@@ -189,6 +210,9 @@ public class ShapesController {
 	}
 	public void setHighlightedShape(MapShape highlightedShape) {
 		this.highlightedShape = highlightedShape;
+	}
+	public List<MapLine> getLines() {
+		return lines;
 	}
 	
 }

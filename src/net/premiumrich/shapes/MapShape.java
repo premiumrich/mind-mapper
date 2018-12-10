@@ -10,6 +10,7 @@ public abstract class MapShape {
 	
 	private Shape shape;
 	private int x, y;
+	private int borderWidth;
 	private Color borderColour;
 	private String text;
 	private Font textFont;
@@ -21,6 +22,7 @@ public abstract class MapShape {
 		this.x = shape.getBounds().x;
 		this.y = shape.getBounds().y;
 		// Defaults
+		setBorderWidth(3);
 		borderColour = Color.black;
 		text = "Example";
 		textFont = new Font("Serif", Font.PLAIN, 12);
@@ -42,6 +44,12 @@ public abstract class MapShape {
 	}
 	public void setY(int y) {
 		this.y = y;
+	}
+	public int getBorderWidth() {
+		return borderWidth;
+	}
+	public void setBorderWidth(int borderWidth) {
+		this.borderWidth = borderWidth;
 	}
 	public Color getBorderColour() {
 		return borderColour;
@@ -74,6 +82,7 @@ public abstract class MapShape {
 		thisShape.addProperty("Y", y);
 		thisShape.addProperty("Width", shape.getBounds().getWidth());
 		thisShape.addProperty("Height", shape.getBounds().getHeight());
+		thisShape.addProperty("Border width", borderWidth);
 		thisShape.addProperty("Border colour", "#"+Integer.toHexString(borderColour.getRGB()).substring(2));
 		thisShape.addProperty("Text", text);
 		thisShape.addProperty("Text font name", textFont.getName());

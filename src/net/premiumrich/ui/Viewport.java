@@ -1,5 +1,6 @@
 package net.premiumrich.ui;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
@@ -15,6 +16,7 @@ import javax.swing.Timer;
 
 import com.google.gson.JsonObject;
 
+import net.premiumrich.shapes.MapLine;
 import net.premiumrich.shapes.MapShape;
 
 public class Viewport {
@@ -80,12 +82,17 @@ public class Viewport {
             }
         }
 		
-		// Iterate and print all shapes
+		// Iterate and print all shapes and lines
 		for (MapShape mapShape : canvasInstance.getShapesController().getShapes()) {
 			if (mapShape.isHighlighted) g2d.setColor(Color.cyan);
 			else g2d.setColor(mapShape.getBorderColour());
+			g2d.setStroke(new BasicStroke(mapShape.getBorderWidth()));
 			g2d.draw(mapShape.getShape());
 			drawShapeText(g2d, mapShape);
+		}
+		for (MapLine line : canvasInstance.getShapesController().getLines()) {
+			line.updateConnection();
+			g2d.draw(line.getLine());
 		}
 	}
 
@@ -123,12 +130,6 @@ public class Viewport {
 				PickerPanel.zoomLbl.setText("Zoom: " + Double.toString(Math.round(zoomFactor*100)/100.0));
 				PickerPanel.xOffsetLbl.setText("xOffset: " + xOffset);
 				PickerPanel.yOffsetLbl.setText("yOffset: " + yOffset);
-				PickerPanel.dDragXLbl.setText("Δ Drag X: " + xDiff);
-				PickerPanel.dDragYLbl.setText("Δ Drag Y: " + yDiff);
-				PickerPanel.tempXLbl.setText(canvasInstance.getShapesController().getShapes().size() != 0 ? 
-												"X: " + canvasInstance.getShapesController().getShapes().get(0).getX() : "X: null");
-				PickerPanel.tempYLbl.setText(canvasInstance.getShapesController().getShapes().size() != 0 ? 
-												"Y: " + canvasInstance.getShapesController().getShapes().get(0).getY() : "Y: null");
 			}
 		});
 		debugLabelsUpdater.start();

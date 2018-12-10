@@ -3,10 +3,18 @@ package net.premiumrich.ui;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
+import java.util.Hashtable;
 
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
+import javax.swing.JSlider;
+import javax.swing.JTextField;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 import net.premiumrich.main.AppFrame;
 
@@ -22,6 +30,9 @@ public class ContextMenu extends JPopupMenu {
 	
 	private JMenu editMenu;
 	private JMenuItem removeElementMenuItem;
+	
+	private JMenu changeBorderWidthMenu;
+	private JSlider changeBorderWidthSlider;
 	
 	private JMenu changeBorderColourMenu;
 	private JMenu changeFontColourMenu;
@@ -56,7 +67,15 @@ public class ContextMenu extends JPopupMenu {
 	}
 	
 	private JMenu changeFontSizeMenu;
-	public static final int fontSizes[] = {10, 11, 12, 14, 16, 18, 24};
+	private static Hashtable<Integer,JLabel> fontSizes = new Hashtable<Integer,JLabel>();
+	static {
+		fontSizes.put(6, new JLabel("6"));
+		fontSizes.put(8, new JLabel("8"));
+		fontSizes.put(10, new JLabel("10"));
+		fontSizes.put(11, new JLabel("11"));
+		fontSizes.put(12, new JLabel("12"));
+	}
+	private JTextField changeFontSizeField;
 	
 	public ContextMenu() {
 		initAddMenu();
@@ -98,6 +117,23 @@ public class ContextMenu extends JPopupMenu {
 				AppFrame.canvasPanel.getShapesController().removeShapeUnderCursor();
 			}
 		});
+		
+		changeBorderWidthMenu = new JMenu("Border width");
+		editMenu.add(changeBorderWidthMenu);
+		// Create a slider to set border width
+		changeBorderWidthSlider = new JSlider(JSlider.HORIZONTAL, 1, 10, 3);
+		changeBorderWidthSlider.setMajorTickSpacing(1);
+		changeBorderWidthSlider.setSnapToTicks(true);
+		changeBorderWidthSlider.setPaintTicks(true);
+		changeBorderWidthSlider.setPaintLabels(true);
+		changeBorderWidthSlider.addChangeListener(new ChangeListener() {
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				AppFrame.canvasPanel.getShapesController().changeBorderWidth(e);
+				AppFrame.canvasPanel.isContextTrigger = false;
+			}
+		});
+		changeBorderWidthMenu.add(changeBorderWidthSlider);
 		
 		changeBorderColourMenu = new JMenu("Border colour");
 		editMenu.add(changeBorderColourMenu);
@@ -149,19 +185,29 @@ public class ContextMenu extends JPopupMenu {
 		
 		changeFontSizeMenu = new JMenu("Font size");
 		editMenu.add(changeFontSizeMenu);
-		// Iterate through available font sizes and create a new menu item for each
-		for (int i : fontSizes) {
-			JMenuItem selectFontSize = new JMenuItem(Integer.toString(i));
-			selectFontSize.setActionCommand(Integer.toString(i));
-			selectFontSize.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					AppFrame.canvasPanel.getShapesController().changeFontSize(e);
+		// Create a text field for custom font sizes
+		changeFontSizeField = new JTextField("12");
+		changeFontSizeField.getDocument().addDocumentListener(new DocumentListener() {
+			@Override
+			public void insertUpdate(DocumentEvent e) {
+				changeFontSize();
+			}
+			@Override
+			public void removeUpdate(DocumentEvent e) {
+				changeFontSize();
+			}
+			@Override
+			public void changedUpdate(DocumentEvent e) {
+			}
+			private void changeFontSize() {
+				if (!changeFontSizeField.getText().isEmpty()) {
+					AppFrame.canvasPanel.getShapesController().changeFontSize(
+							Integer.parseInt(changeFontSizeField.getText()));
 					AppFrame.canvasPanel.isContextTrigger = false;
 				}
-			});
-			changeFontSizeMenu.add(selectFontSize);
-		}
+			}
+		});
+		changeFontSizeMenu.add(changeFontSizeField);
 		
 		changeFontColourMenu = new JMenu("Font colour");
 		editMenu.add(changeFontColourMenu);
