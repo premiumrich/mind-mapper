@@ -23,19 +23,16 @@ public class Viewport {
 
 	private CanvasPanel canvasInstance;
 
-	long lastFrameTime = 0;
-	private static final int MAX_FPS = 60;
+	public static final int MAX_FPS = 60;
+	private long lastFrameTime = 0;
 	// Zoom and pan variables
-	public boolean zooming;
-	public double zoomFactor = 1;
-	public double prevZoomFactor = 1;
+	boolean zooming;
+	double zoomFactor = 1, prevZoomFactor = 1;
+	boolean released;
 	public boolean panning;
-	public boolean released;
-	public int xOffset = 0;
-	public int yOffset = 0;
-	public Point startPoint;
-	public int xDiff;
-	public int yDiff;
+	public int xOffset = 0, yOffset = 0;
+	Point panStartPoint;
+	int panXDiff, panYDiff;
 	
 	private Timer fpsCounterUpdater;
 	private Timer debugLabelsUpdater;
@@ -69,15 +66,15 @@ public class Viewport {
 		
 		if (panning) {
 			AffineTransform at = new AffineTransform();
-            at.translate(xOffset + xDiff, yOffset + yDiff);
+            at.translate(xOffset + panXDiff, yOffset + panYDiff);
             at.scale(zoomFactor, zoomFactor);
             g2d.transform(at);
 
             if (released) {
-                xOffset += xDiff;
-                yOffset += yDiff;
-    			xDiff = 0;
-        		yDiff = 0;
+                xOffset += panXDiff;
+                yOffset += panYDiff;
+    			panXDiff = 0;
+        		panYDiff = 0;
             }
         }
 		

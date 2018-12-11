@@ -39,7 +39,7 @@ public abstract class MapShape {
 	public int getY() {
 		return y;
 	}
-	public abstract void setNewBounds(int x, int y);	// Force subclasses (shapes) to override this
+	public abstract void setNewCoordinates(int x, int y);	// Force subclasses (shapes) to override this
 	public int getBorderWidth() {
 		return borderWidth;
 	}

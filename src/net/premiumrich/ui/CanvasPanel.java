@@ -38,18 +38,19 @@ public class CanvasPanel extends JPanel implements MouseListener, MouseMotionLis
 	public void mousePressed(MouseEvent e) {
 		popup(e);
 		if (!contextMenu.isVisible()) isContextTrigger = false;
-		viewport.startPoint = MouseInfo.getPointerInfo().getLocation();
+		viewport.panStartPoint = e.getLocationOnScreen();
 		viewport.panning = true;
 		viewport.released = false;
 		
 		// Select the shape that is clicked on
 		if (shapeCon.getShapesUnderCursor(e.getPoint()).size() > 0) {
+			shapeCon.dragStartPoint = e.getLocationOnScreen();			// Update drag diff reference
 			if (shapeCon.shapeSelectionIndex > shapeCon.getShapesUnderCursor(e.getPoint()).size() - 1)
-				shapeCon.shapeSelectionIndex = 0;
+				shapeCon.shapeSelectionIndex = 0;		// Prevent index overflow by restarting cycle
 			shapeCon.prevSelectedShape = shapeCon.selectedShape;
 			if (shapeCon.prevSelectedShape != null) shapeCon.prevSelectedShape.isHighlighted = false;
 			shapeCon.setSelectedShape(shapeCon.getShapesUnderCursor(e.getPoint()).get(shapeCon.shapeSelectionIndex));
-			shapeCon.shapeSelectionIndex++;
+			shapeCon.shapeSelectionIndex++;				// Increment index to select overlapped shapes
 		} else {	// Remove the selection
 			shapeCon.shapeSelectionIndex = 0;
 			shapeCon.setSelectedShape(null);
@@ -60,16 +61,23 @@ public class CanvasPanel extends JPanel implements MouseListener, MouseMotionLis
 		viewport.released = true;
 		repaint();		// Bypass FPS limiter and force repaint to lock in position
 	}
-	public void mouseMoved(MouseEvent e) {
-	}
 	public void mouseDragged(MouseEvent e) {
-		if (shapeCon.getSelectedShape() == null && !isContextTrigger) {
+		if (shapeCon.getSelectedShape() == null && !isContextTrigger) {		// Pan the canvas
 			viewport.panning = true;
 			
 			Point curPoint = e.getLocationOnScreen();
-			viewport.xDiff = curPoint.x - viewport.startPoint.x;
-			viewport.yDiff = curPoint.y - viewport.startPoint.y;
+			viewport.panXDiff = curPoint.x - viewport.panStartPoint.x;
+			viewport.panYDiff = curPoint.y - viewport.panStartPoint.y;
 			
+			viewport.handleRepaint();
+		} else {						// Drag the selected shape
+			Point curPoint = e.getLocationOnScreen();
+			if (curPoint.x  != shapeCon.dragStartPoint.x || curPoint.y != shapeCon.dragStartPoint.y) {
+				shapeCon.selectedShape.setNewCoordinates(
+							shapeCon.selectedShape.getX() + (curPoint.x - shapeCon.dragStartPoint.x), 
+							shapeCon.selectedShape.getY() + (curPoint.y - shapeCon.dragStartPoint.y));
+				shapeCon.dragStartPoint = e.getLocationOnScreen();			// Update drag diff reference
+			}
 			viewport.handleRepaint();
 		}
 	}
@@ -84,6 +92,8 @@ public class CanvasPanel extends JPanel implements MouseListener, MouseMotionLis
 			}
 			viewport.handleRepaint();
 		}
+	}
+	public void mouseMoved(MouseEvent e) {
 	}
 	public void mouseClicked(MouseEvent e) {
 	}

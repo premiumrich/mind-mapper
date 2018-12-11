@@ -22,6 +22,8 @@ public class ShapesController {
 	private CanvasPanel canvasInstance;
 	private Viewport viewport;
 	
+	public Point dragStartPoint;
+	
 	private List<MapShape> shapes;
 	public MapShape selectedShape;
 	public MapShape prevSelectedShape;
