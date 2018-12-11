@@ -10,15 +10,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import javax.swing.JSlider;
-import javax.swing.event.ChangeEvent;
-
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import net.premiumrich.ui.CanvasPanel;
-import net.premiumrich.ui.ContextMenu;
 import net.premiumrich.ui.Viewport;
 
 public class ShapesController {
@@ -27,14 +23,20 @@ public class ShapesController {
 	private Viewport viewport;
 	
 	private List<MapShape> shapes;
-	private MapShape highlightedShape;
-	private List<MapLine> lines;
+	public MapShape selectedShape;
+	public MapShape prevSelectedShape;
+	public int shapeSelectionIndex = 0;
+	
+	public boolean isConnecting;
+	private List<MapLine> connections;
+	public MapShape connectionOrigin;
+	public MapShape connectionDestination;
 	
 	public ShapesController(CanvasPanel canvasInstance, Viewport viewport) {
 		this.canvasInstance = canvasInstance;
 		this.viewport = viewport;
 		shapes = new ArrayList<MapShape>();
-		lines = new ArrayList<MapLine>();
+		connections = new ArrayList<MapLine>();
 	}
 	
 	public void addShape(ActionEvent e) {
@@ -57,116 +59,85 @@ public class ShapesController {
 			break;
 		}
 		
+		setSelectedShape(null);
+		setSelectedShape(shapes.get(shapes.size()-1));
 		viewport.panning = true;
 		canvasInstance.repaint();
 	}
 	
-	public boolean isShapeUnderCursor(Point cursor) {
+	public List<MapShape> getShapesUnderCursor(Point cursor) {
+		// Offset cursor to be consistent with shape location
+		cursor.translate(-(int)viewport.xOffset, -(int)viewport.yOffset);
+		List<MapShape> shapesUnderCursor = new ArrayList<MapShape>();
 		for (MapShape shape : shapes) {
 			if (shape.getShape().getBounds().contains(cursor))
-				return true;
+				shapesUnderCursor.add(shape);
 		}
-		return false;
+		return shapesUnderCursor;
 	}
 	
-	public void removeShapeUnderCursor() {
-		// Offset cursor to be consistent with shape location
-		Point offsetCursor = canvasInstance.contextTriggerEvent.getPoint();
-		offsetCursor.translate(-(int)viewport.xOffset, -(int)viewport.yOffset);
-		for (MapShape shape : shapes) {
-			if (shape.getShape().getBounds()
-					.contains(offsetCursor.getX(), offsetCursor.getY())) {
-				shapes.remove(shape);
-				break;
-			}
-		}
+	public void removeSelectedShape() {
+		shapes.remove(selectedShape);
 		canvasInstance.repaint();
 	}
 	
-	public void changeBorderWidth(ChangeEvent e) {
-		// Offset cursor to be consistent with shape location
-		Point offsetCursor = canvasInstance.contextTriggerEvent.getPoint();
-		offsetCursor.translate(-(int)viewport.xOffset, -(int)viewport.yOffset);
-		for (MapShape shape : shapes) {
-			if (shape.getShape().getBounds().contains(offsetCursor)) {
-				shape.setBorderWidth(((JSlider)e.getSource()).getValue());
-			}
-		}
+	public void changeBorderWidth(int borderWidth) {
+		selectedShape.setBorderWidth(borderWidth);
 		canvasInstance.repaint();
 	}
 	
-	public void changeBorderColour(ActionEvent e) {
-		// Offset cursor to be consistent with shape location
-		Point offsetCursor = canvasInstance.contextTriggerEvent.getPoint();
-		offsetCursor.translate(-(int)viewport.xOffset, -(int)viewport.yOffset);
-		for (MapShape shape : shapes) {
-			if (shape.getShape().getBounds().contains(offsetCursor)) {
-				shape.setBorderColour(ContextMenu.colours.get(e.getActionCommand()));
-			}
-		}
+	public void changeBorderColour(Color borderColour) {
+		selectedShape.setBorderColour(borderColour);
 		canvasInstance.repaint();
 	}
 	
-	public void changeFont(ActionEvent e) {
-		// Offset cursor to be consistent with shape location
-		Point offsetCursor = canvasInstance.contextTriggerEvent.getPoint();
-		offsetCursor.translate(-(int)viewport.xOffset, -(int)viewport.yOffset);
-		for (MapShape shape : shapes) {
-			if (shape.getShape().getBounds().contains(offsetCursor)) {
-				shape.setTextFont(
-						new Font(e.getActionCommand(), shape.getTextFont().getStyle(), shape.getTextFont().getSize()));
-			}
-		}
+	public void changeFont(String fontName) {
+		selectedShape.setTextFont(new Font(fontName, 
+									selectedShape.getTextFont().getStyle(), 
+									selectedShape.getTextFont().getSize()));
 		canvasInstance.repaint();
 	}
 	
-	public void changeFontStyle(ActionEvent e) {
-		// Offset cursor to be consistent with shape location
-		Point offsetCursor = canvasInstance.contextTriggerEvent.getPoint();
-		offsetCursor.translate(-(int)viewport.xOffset, -(int)viewport.yOffset);
-		for (MapShape shape : shapes) {
-			if (shape.getShape().getBounds().contains(offsetCursor)) {
-				shape.setTextFont(new Font(shape.getTextFont().getFontName(), 
-									Integer.parseInt(e.getActionCommand()), 
-									shape.getTextFont().getSize()));
-			}
-		}
+	public void changeFontStyle(int fontStyle) {
+		selectedShape.setTextFont(new Font(selectedShape.getTextFont().getFontName(), 
+									fontStyle,
+									selectedShape.getTextFont().getSize()));
 		canvasInstance.repaint();
 	}
 	
-	public void changeFontSize(int newFontSize) {
-		// Offset cursor to be consistent with shape location
-		Point offsetCursor = canvasInstance.contextTriggerEvent.getPoint();
-		offsetCursor.translate(-(int)viewport.xOffset, -(int)viewport.yOffset);
-		for (MapShape shape : shapes) {
-			if (shape.getShape().getBounds().contains(offsetCursor)) {
-				shape.setTextFont(new Font(shape.getTextFont().getFontName(), 
-									shape.getTextFont().getStyle(), 
-									newFontSize));
-			}
-		}
+	public void changeFontSize(int fontSize) {
+		selectedShape.setTextFont(new Font(selectedShape.getTextFont().getFontName(), 
+									selectedShape.getTextFont().getStyle(), 
+									fontSize));
 		canvasInstance.repaint();
 	}
 	
-	public void changeFontColour(ActionEvent e) {
-		// Offset cursor to be consistent with shape location
-		Point offsetCursor = canvasInstance.contextTriggerEvent.getPoint();
-		offsetCursor.translate(-(int)viewport.xOffset, -(int)viewport.yOffset);
-		for (MapShape shape : shapes) {
-			if (shape.getShape().getBounds().contains(offsetCursor)) {
-				shape.setFontColour(ContextMenu.colours.get(e.getActionCommand()));
-			}
-		}
+	public void changeFontColour(Color fontColour) {
+		selectedShape.setFontColour(fontColour);
 		canvasInstance.repaint();
 	}
 	
 	public void newConnection(MapShape origin, MapShape termination) {
-		lines.add(new MapLine(origin, termination));
+		connections.add(new MapLine(origin, termination));
 	}
 	
 	// Getters and setters
 	public List<MapShape> getShapes() {
 		return shapes;
+	}
+	public MapShape getSelectedShape() {
+		return selectedShape;
+	}
+	public void setSelectedShape(MapShape selectedShape) {
+		this.selectedShape = selectedShape;
+		if (prevSelectedShape != null) prevSelectedShape.isHighlighted = false;
+		if (selectedShape != null)
+			selectedShape.isHighlighted = true;
+		else
+			for (MapShape shape : shapes) shape.isHighlighted = false;
+	}
+	public List<MapLine> getConnections() {
+		return connections;
 	}
 	public JsonArray getShapesAsJson() {
 		JsonArray shapesData = new JsonArray();
@@ -204,15 +175,6 @@ public class ShapesController {
 				e.printStackTrace();
 			}
 		}
-	}
-	public MapShape getHighlightedShape() {
-		return highlightedShape;
-	}
-	public void setHighlightedShape(MapShape highlightedShape) {
-		this.highlightedShape = highlightedShape;
-	}
-	public List<MapLine> getLines() {
-		return lines;
 	}
 	
 }

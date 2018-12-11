@@ -17,6 +17,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import net.premiumrich.main.AppFrame;
+import net.premiumrich.shapes.MapShape;
 
 import java.awt.Color;
 
@@ -33,12 +34,16 @@ public class ContextMenu extends JPopupMenu {
 	
 	private JMenu changeBorderWidthMenu;
 	private JSlider changeBorderWidthSlider;
-	
 	private JMenu changeBorderColourMenu;
+	
 	private JMenu changeFontColourMenu;
-	// The limitation of using ActionCommands to communicate actions across classes is that
-	// only Strings can be used. Thus, a lookup table must be used to discern the action.
-	public static final HashMap<String,Color> colours = new HashMap<String,Color>();
+	private JMenu changeFontMenu;
+	private JMenu changeFontStyleMenu;
+	private JMenu changeFontSizeMenu;
+	private JTextField changeFontSizeField;
+	
+	// Lookup tables for values and their names
+	private static final HashMap<String,Color> colours = new HashMap<String,Color>();
 	static {
 		colours.put("Black", Color.black);
 		colours.put("Red", Color.red);
@@ -49,24 +54,18 @@ public class ContextMenu extends JPopupMenu {
 		colours.put("Magenta", Color.magenta);
 		colours.put("Pink", Color.pink);
 	}
-	
-	private JMenu changeFontMenu;
-	public static final HashMap<String,String> fonts = new HashMap<String,String>();
+	private static final HashMap<String,String> fonts = new HashMap<String,String>();
 	static {
 		fonts.put("Times New Roman", "Serif");
 		fonts.put("Helvetica", "SansSerif");
 		fonts.put("Courier", "Monospaced");
 	}
-	
-	private JMenu changeFontStyleMenu;
-	public static final HashMap<String,Integer> fontStyles = new HashMap<String,Integer>();
+	private static final HashMap<String,Integer> fontStyles = new HashMap<String,Integer>();
 	static {
 		fontStyles.put("Plain", 0);
 		fontStyles.put("Bold", 1);
 		fontStyles.put("Italic", 2);
 	}
-	
-	private JMenu changeFontSizeMenu;
 	private static Hashtable<Integer,JLabel> fontSizes = new Hashtable<Integer,JLabel>();
 	static {
 		fontSizes.put(6, new JLabel("6"));
@@ -75,7 +74,7 @@ public class ContextMenu extends JPopupMenu {
 		fontSizes.put(11, new JLabel("11"));
 		fontSizes.put(12, new JLabel("12"));
 	}
-	private JTextField changeFontSizeField;
+	
 	
 	public ContextMenu() {
 		initAddMenu();
@@ -107,16 +106,17 @@ public class ContextMenu extends JPopupMenu {
 	private void initEditMenu() {
 		editMenu = new JMenu("Edit");
 		this.add(editMenu);
-		editMenu.setVisible(false);
 		
 		removeElementMenuItem = new JMenuItem("Remove this");
 		editMenu.add(removeElementMenuItem);
 		removeElementMenuItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				AppFrame.canvasPanel.getShapesController().removeShapeUnderCursor();
+				AppFrame.canvasPanel.getShapesController().removeSelectedShape();
 			}
 		});
+		
+		editMenu.addSeparator();
 		
 		changeBorderWidthMenu = new JMenu("Border width");
 		editMenu.add(changeBorderWidthMenu);
@@ -129,7 +129,7 @@ public class ContextMenu extends JPopupMenu {
 		changeBorderWidthSlider.addChangeListener(new ChangeListener() {
 			@Override
 			public void stateChanged(ChangeEvent e) {
-				AppFrame.canvasPanel.getShapesController().changeBorderWidth(e);
+				AppFrame.canvasPanel.getShapesController().changeBorderWidth(changeBorderWidthSlider.getValue());
 				AppFrame.canvasPanel.isContextTrigger = false;
 			}
 		});
@@ -140,53 +140,53 @@ public class ContextMenu extends JPopupMenu {
 		// Iterate through available colours and create a new menu item for each
 		for (String colourName : colours.keySet()) {
 			JMenuItem selectBorderColour = new JMenuItem(colourName);
-			selectBorderColour.setActionCommand(colourName);
 			selectBorderColour.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					AppFrame.canvasPanel.getShapesController().changeBorderColour(e);
+					AppFrame.canvasPanel.getShapesController().changeBorderColour(colours.get(colourName));
 					AppFrame.canvasPanel.isContextTrigger = false;
 				}
 			});
 			changeBorderColourMenu.add(selectBorderColour);
 		}
 		
-		changeFontMenu = new JMenu("Font");
+		editMenu.addSeparator();
+		
+		changeFontMenu = new JMenu("Text font");
 		editMenu.add(changeFontMenu);
 		// Iterate through available fonts and create a new menu item for each
 		for (String fontName : fonts.keySet()) {
 			JMenuItem selectFont = new JMenuItem(fontName);
-			selectFont.setActionCommand(fonts.get(fontName));
 			selectFont.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					AppFrame.canvasPanel.getShapesController().changeFont(e);
+					AppFrame.canvasPanel.getShapesController().changeFont(fontName);
 					AppFrame.canvasPanel.isContextTrigger = false;
 				}
 			});
 			changeFontMenu.add(selectFont);
 		}
 		
-		changeFontStyleMenu = new JMenu("Font style");
+		changeFontStyleMenu = new JMenu("Text font style");
 		editMenu.add(changeFontStyleMenu);
-		// Iterate through available font styles and create a new menu item for each
+		// Iterate through available font styles and create a new radio button for each
 		for (String fontStyle : fontStyles.keySet()) {
 			JMenuItem selectFontStyle = new JMenuItem(fontStyle);
-			selectFontStyle.setActionCommand(fontStyles.get(fontStyle).toString());
 			selectFontStyle.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					AppFrame.canvasPanel.getShapesController().changeFontStyle(e);
+					AppFrame.canvasPanel.getShapesController().changeFontStyle(fontStyles.get(fontStyle));
 					AppFrame.canvasPanel.isContextTrigger = false;
 				}
 			});
 			changeFontStyleMenu.add(selectFontStyle);
 		}
 		
-		changeFontSizeMenu = new JMenu("Font size");
+		changeFontSizeMenu = new JMenu("Text font size");
 		editMenu.add(changeFontSizeMenu);
 		// Create a text field for custom font sizes
-		changeFontSizeField = new JTextField("12");
+		changeFontSizeField = new JTextField();
+		changeFontSizeField.setColumns(3);
 		changeFontSizeField.getDocument().addDocumentListener(new DocumentListener() {
 			@Override
 			public void insertUpdate(DocumentEvent e) {
@@ -209,21 +209,25 @@ public class ContextMenu extends JPopupMenu {
 		});
 		changeFontSizeMenu.add(changeFontSizeField);
 		
-		changeFontColourMenu = new JMenu("Font colour");
+		changeFontColourMenu = new JMenu("Text font colour");
 		editMenu.add(changeFontColourMenu);
 		// Iterate through available colours and create a new menu item for each
 		for (String colourName : colours.keySet()) {
 			JMenuItem selectFontColour = new JMenuItem(colourName);
-			selectFontColour.setActionCommand(colourName);
 			selectFontColour.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					AppFrame.canvasPanel.getShapesController().changeFontColour(e);
+					AppFrame.canvasPanel.getShapesController().changeFontColour(colours.get(colourName));
 					AppFrame.canvasPanel.isContextTrigger = false;
 				}
 			});
 			changeFontColourMenu.add(selectFontColour);
 		}
+	}
+	
+	public void updateEditMenuValues(MapShape selectedShape) {
+		changeBorderWidthSlider.setValue(selectedShape.getBorderWidth());
+		changeFontSizeField.setText(Integer.toString(selectedShape.getTextFont().getSize()));
 	}
 	
 	public JMenu getAddMenu() {

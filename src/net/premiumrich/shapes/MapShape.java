@@ -8,8 +8,8 @@ import com.google.gson.JsonObject;
 
 public abstract class MapShape {
 	
-	private Shape shape;
-	private int x, y;
+	protected Shape shape;
+	protected int x, y;
 	private int borderWidth;
 	private Color borderColour;
 	private String text;
@@ -36,15 +36,10 @@ public abstract class MapShape {
 	public int getX() {
 		return x;
 	}
-	public void setX(int x) {
-		this.x = x;
-	}
 	public int getY() {
 		return y;
 	}
-	public void setY(int y) {
-		this.y = y;
-	}
+	public abstract void setNewBounds(int x, int y);	// Force subclasses (shapes) to override this
 	public int getBorderWidth() {
 		return borderWidth;
 	}
@@ -80,8 +75,8 @@ public abstract class MapShape {
 		thisShape.addProperty("Type", this.getClass().getName());
 		thisShape.addProperty("X", x);
 		thisShape.addProperty("Y", y);
-		thisShape.addProperty("Width", shape.getBounds().getWidth());
-		thisShape.addProperty("Height", shape.getBounds().getHeight());
+		thisShape.addProperty("Width", shape.getBounds().width);
+		thisShape.addProperty("Height", shape.getBounds().height);
 		thisShape.addProperty("Border width", borderWidth);
 		thisShape.addProperty("Border colour", "#"+Integer.toHexString(borderColour.getRGB()).substring(2));
 		thisShape.addProperty("Text", text);

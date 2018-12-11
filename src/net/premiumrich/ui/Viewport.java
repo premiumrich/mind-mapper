@@ -22,24 +22,23 @@ import net.premiumrich.shapes.MapShape;
 public class Viewport {
 
 	private CanvasPanel canvasInstance;
-	
-	private Timer fpsCounterUpdater;
-	private Timer debugLabelsUpdater;
 
 	long lastFrameTime = 0;
 	private static final int MAX_FPS = 60;
-	
 	// Zoom and pan variables
+	public boolean zooming;
 	public double zoomFactor = 1;
 	public double prevZoomFactor = 1;
-	public boolean zooming;
-	public int xOffset = 0;
-	public int yOffset = 0;
 	public boolean panning;
 	public boolean released;
+	public int xOffset = 0;
+	public int yOffset = 0;
+	public Point startPoint;
 	public int xDiff;
 	public int yDiff;
-	public Point startPoint;
+	
+	private Timer fpsCounterUpdater;
+	private Timer debugLabelsUpdater;
 	
 	public Viewport(CanvasPanel canvasInstance) {
 		this.canvasInstance = canvasInstance;
@@ -90,9 +89,9 @@ public class Viewport {
 			g2d.draw(mapShape.getShape());
 			drawShapeText(g2d, mapShape);
 		}
-		for (MapLine line : canvasInstance.getShapesController().getLines()) {
-			line.updateConnection();
-			g2d.draw(line.getLine());
+		for (MapLine connection : canvasInstance.getShapesController().getConnections()) {
+			connection.updateConnection();
+			g2d.draw(connection.getLine());
 		}
 	}
 

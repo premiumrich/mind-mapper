@@ -16,11 +16,11 @@ public class CanvasPanel extends JPanel implements MouseListener, MouseMotionLis
 	public MouseEvent contextTriggerEvent;
 	
 	private Viewport viewport;
-	private ShapesController shapesController;
+	private ShapesController shapeCon;
 	
 	public CanvasPanel() {
 		viewport = new Viewport(this);
-		shapesController = new ShapesController(this, viewport);
+		shapeCon = new ShapesController(this, viewport);
 		contextMenu = new ContextMenu();
 		this.addMouseListener(this);
 		this.addMouseMotionListener(this);
@@ -33,14 +33,27 @@ public class CanvasPanel extends JPanel implements MouseListener, MouseMotionLis
 		viewport.drawAll(g);		// Invoke drawing
 	}
 	
-	// Mouse activity listeners
 	
+	// Mouse activity listeners
 	public void mousePressed(MouseEvent e) {
 		popup(e);
 		if (!contextMenu.isVisible()) isContextTrigger = false;
 		viewport.startPoint = MouseInfo.getPointerInfo().getLocation();
 		viewport.panning = true;
 		viewport.released = false;
+		
+		// Select the shape that is clicked on
+		if (shapeCon.getShapesUnderCursor(e.getPoint()).size() > 0) {
+			if (shapeCon.shapeSelectionIndex > shapeCon.getShapesUnderCursor(e.getPoint()).size() - 1)
+				shapeCon.shapeSelectionIndex = 0;
+			shapeCon.prevSelectedShape = shapeCon.selectedShape;
+			if (shapeCon.prevSelectedShape != null) shapeCon.prevSelectedShape.isHighlighted = false;
+			shapeCon.setSelectedShape(shapeCon.getShapesUnderCursor(e.getPoint()).get(shapeCon.shapeSelectionIndex));
+			shapeCon.shapeSelectionIndex++;
+		} else {	// Remove the selection
+			shapeCon.shapeSelectionIndex = 0;
+			shapeCon.setSelectedShape(null);
+		}
 	}
 	public void mouseReleased(MouseEvent e) {
 		popup(e);
@@ -48,25 +61,9 @@ public class CanvasPanel extends JPanel implements MouseListener, MouseMotionLis
 		repaint();		// Bypass FPS limiter and force repaint to lock in position
 	}
 	public void mouseMoved(MouseEvent e) {
-		Point offsetCursor = e.getPoint();	// Offset cursor to be consistent with shape location
-		offsetCursor.translate(-(int)viewport.xOffset, -(int)viewport.yOffset);
-		
-		boolean found = false;
-		for (MapShape shape : shapesController.getShapes()) {
-			if (shape.getShape().getBounds().contains(offsetCursor)) {
-				shape.isHighlighted = true;
-				found = true;
-				shapesController.setHighlightedShape(shape);
-			} else {
-				shape.isHighlighted = false;
-			}
-		}
-		if (!found) shapesController.setHighlightedShape(null);
-		
-		viewport.handleRepaint();
 	}
 	public void mouseDragged(MouseEvent e) {
-		if (shapesController.getHighlightedShape() == null && !isContextTrigger) {
+		if (shapeCon.getSelectedShape() == null && !isContextTrigger) {
 			viewport.panning = true;
 			
 			Point curPoint = e.getLocationOnScreen();
@@ -94,27 +91,30 @@ public class CanvasPanel extends JPanel implements MouseListener, MouseMotionLis
 	}
 	public void mouseExited(MouseEvent e) {
 	}
-
+	
+	
 	// Handle displaying context menu
 	private void popup(MouseEvent e) {
 		if (e.isPopupTrigger()) {
 			isContextTrigger = true;
 			contextTriggerEvent = e;
-			Point offsetCursor = e.getPoint();	// Offset cursor to be consistent with shape location
-			offsetCursor.translate(-(int)viewport.xOffset, -(int)viewport.yOffset);
-			if (shapesController.isShapeUnderCursor(offsetCursor))
-				contextMenu.getEditMenu().setVisible(true);
+			if (shapeCon.getShapesUnderCursor(e.getPoint()).size() > 0) {
+				contextMenu.updateEditMenuValues(shapeCon.selectedShape);
+				contextMenu.getEditMenu().setEnabled(true);
+			}
 			else
-				contextMenu.getEditMenu().setVisible(false);
+				contextMenu.getEditMenu().setEnabled(false);
 			contextMenu.show(e.getComponent(), e.getX(), e.getY());
 		}
 	}
 	
+	
+	// Getters
 	public Viewport getViewport() {
 		return viewport;
 	}
 	public ShapesController getShapesController() {
-		return shapesController;
+		return shapeCon;
 	}
 	
 }
