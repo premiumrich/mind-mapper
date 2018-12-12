@@ -3,9 +3,7 @@ package net.premiumrich.ui;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
-import java.util.Hashtable;
 
-import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
@@ -20,6 +18,7 @@ import net.premiumrich.main.AppFrame;
 import net.premiumrich.shapes.MapShape;
 
 import java.awt.Color;
+import java.awt.Font;
 
 public class ContextMenu extends JPopupMenu {
 
@@ -62,17 +61,9 @@ public class ContextMenu extends JPopupMenu {
 	}
 	private static final HashMap<String,Integer> fontStyles = new HashMap<String,Integer>();
 	static {
-		fontStyles.put("Plain", 0);
-		fontStyles.put("Bold", 1);
-		fontStyles.put("Italic", 2);
-	}
-	private static Hashtable<Integer,JLabel> fontSizes = new Hashtable<Integer,JLabel>();
-	static {
-		fontSizes.put(6, new JLabel("6"));
-		fontSizes.put(8, new JLabel("8"));
-		fontSizes.put(10, new JLabel("10"));
-		fontSizes.put(11, new JLabel("11"));
-		fontSizes.put(12, new JLabel("12"));
+		fontStyles.put("Plain", Font.PLAIN);
+		fontStyles.put("Bold", Font.BOLD);
+		fontStyles.put("Italic", Font.ITALIC);
 	}
 	
 	
@@ -226,6 +217,7 @@ public class ContextMenu extends JPopupMenu {
 	}
 	
 	public void updateEditMenuValues(MapShape selectedShape) {
+		// Update border width and font size values for the selected shape
 		changeBorderWidthSlider.setValue(selectedShape.getBorderWidth());
 		changeFontSizeField.setText(Integer.toString(selectedShape.getTextFont().getSize()));
 	}

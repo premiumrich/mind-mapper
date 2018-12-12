@@ -61,8 +61,10 @@ public class ShapesController {
 			break;
 		}
 		
+		// Select the newly added shape
 		setSelectedShape(null);
 		setSelectedShape(shapes.get(shapes.size()-1));
+		
 		viewport.panning = true;
 		canvasInstance.repaint();
 	}
@@ -70,6 +72,7 @@ public class ShapesController {
 	public List<MapShape> getShapesUnderCursor(Point cursor) {
 		// Offset cursor to be consistent with shape location
 		cursor.translate(-(int)viewport.xOffset, -(int)viewport.yOffset);
+		
 		List<MapShape> shapesUnderCursor = new ArrayList<MapShape>();
 		for (MapShape shape : shapes) {
 			if (shape.getShape().getBounds().contains(cursor))
@@ -101,14 +104,14 @@ public class ShapesController {
 	}
 	
 	public void changeFontStyle(int fontStyle) {
-		selectedShape.setTextFont(new Font(selectedShape.getTextFont().getFontName(), 
+		selectedShape.setTextFont(new Font(selectedShape.getTextFont().getFamily(), 
 									fontStyle,
 									selectedShape.getTextFont().getSize()));
 		canvasInstance.repaint();
 	}
 	
 	public void changeFontSize(int fontSize) {
-		selectedShape.setTextFont(new Font(selectedShape.getTextFont().getFontName(), 
+		selectedShape.setTextFont(new Font(selectedShape.getTextFont().getFamily(), 
 									selectedShape.getTextFont().getStyle(), 
 									fontSize));
 		canvasInstance.repaint();
@@ -122,6 +125,7 @@ public class ShapesController {
 	public void newConnection(MapShape origin, MapShape termination) {
 		connections.add(new MapLine(origin, termination));
 	}
+	
 	
 	// Getters and setters
 	public List<MapShape> getShapes() {

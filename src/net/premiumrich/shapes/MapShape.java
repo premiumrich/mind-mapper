@@ -29,6 +29,7 @@ public abstract class MapShape {
 		fontColour = Color.black;
 	}
 	
+	
 	// Getters and setters
 	public Shape getShape() {
 		return shape;

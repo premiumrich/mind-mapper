@@ -22,6 +22,9 @@ public class CanvasPanel extends JPanel implements MouseListener, MouseMotionLis
 		viewport = new Viewport(this);
 		shapeCon = new ShapesController(this, viewport);
 		contextMenu = new ContextMenu();
+
+		this.setBackground(Color.white);
+		
 		this.addMouseListener(this);
 		this.addMouseMotionListener(this);
 		this.addMouseWheelListener(this);
@@ -101,7 +104,6 @@ public class CanvasPanel extends JPanel implements MouseListener, MouseMotionLis
 	}
 	public void mouseExited(MouseEvent e) {
 	}
-	
 	
 	// Handle displaying context menu
 	private void popup(MouseEvent e) {

@@ -2,19 +2,32 @@ package net.premiumrich.ui;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
-import net.premiumrich.io.IOHandler;
+import org.apache.commons.io.FilenameUtils;
+
+import net.premiumrich.io.IOController;
 import net.premiumrich.main.AppFrame;
 
 public class Menubar extends JMenuBar {
 
 	private static final long serialVersionUID = 0;
 	
+	private static final IOController io = new IOController(AppFrame.canvasPanel);
+	
 	private JMenu fileMenu;
 	private JMenuItem fileOpenMenuItem;
 	private JMenuItem fileSaveMenuItem;
+	private JMenuItem fileSaveAsMenuItem;
+	private static final JFileChooser fileChooser = new JFileChooser(System.getProperty("user.home"));
+	static {
+		fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+		fileChooser.setAcceptAllFileFilterUsed(false);
+		fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Mind Maps (*.json)", "json"));
+	}
 	
 	private JMenu editMenu;
 	
@@ -38,8 +51,12 @@ public class Menubar extends JMenuBar {
 		fileOpenMenuItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				IOHandler io = new IOHandler(AppFrame.canvasPanel);
-				io.handleOpen();
+				fileChooser.setDialogTitle("Open Mind Map");
+				fileChooser.setSelectedFile(new File(""));
+				int action = fileChooser.showOpenDialog(null);
+				if (action == JFileChooser.APPROVE_OPTION) {
+					io.handleOpen(fileChooser.getSelectedFile());
+				}
 			}
 		});
 		fileMenu.add(fileOpenMenuItem);
@@ -48,11 +65,22 @@ public class Menubar extends JMenuBar {
 		fileSaveMenuItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				IOHandler io = new IOHandler(AppFrame.canvasPanel);
-				io.handleSave();
+				if (io.fileOpened) {
+					io.handleSave(io.getCurrentFile());
+				} else
+					saveAs();
 			}
 		});
 		fileMenu.add(fileSaveMenuItem);
+		
+		fileSaveAsMenuItem = new JMenuItem("Save As");
+		fileSaveAsMenuItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				saveAs();
+			}
+		});
+		fileMenu.add(fileSaveAsMenuItem);
 	}
 
 	private void initEditMenu() {
@@ -75,6 +103,21 @@ public class Menubar extends JMenuBar {
 	private void initHelpMenu() {
 		helpMenu = new JMenu("Help");
 		this.add(helpMenu);
+	}
+	
+	// Helper methods
+	private void saveAs() {
+		fileChooser.setDialogTitle("Save Mind Map");
+		fileChooser.setSelectedFile(new File("My Mind Map.json"));
+		int action = fileChooser.showSaveDialog(null);
+		if (action == JFileChooser.APPROVE_OPTION) {
+			// Append ".json" extension if missing
+			File file = fileChooser.getSelectedFile();
+			if (! FilenameUtils.getExtension(file.getName()).equalsIgnoreCase("json")) {
+			    file = new File(file.getParentFile(), FilenameUtils.getBaseName(file.getName()) + ".json");
+			}
+			io.handleSave(file);
+		}
 	}
 	
 }
