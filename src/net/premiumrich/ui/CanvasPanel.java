@@ -21,7 +21,7 @@ public class CanvasPanel extends JPanel implements MouseListener, MouseMotionLis
 	public CanvasPanel() {
 		viewport = new Viewport(this);
 		shapeCon = new ShapesController(this, viewport);
-		contextMenu = new ContextMenu();
+		contextMenu = new ContextMenu(this);
 
 		this.setBackground(Color.white);
 		

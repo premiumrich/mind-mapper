@@ -14,7 +14,6 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-import net.premiumrich.main.AppFrame;
 import net.premiumrich.shapes.MapShape;
 
 import java.awt.Color;
@@ -23,6 +22,8 @@ import java.awt.Font;
 public class ContextMenu extends JPopupMenu {
 
 	private static final long serialVersionUID = 0;
+	
+	private CanvasPanel canvasPanel;
 	
 	private JMenu addMenu;
 	private JMenuItem addEllipseMenuItem;
@@ -67,7 +68,8 @@ public class ContextMenu extends JPopupMenu {
 	}
 	
 	
-	public ContextMenu() {
+	public ContextMenu(CanvasPanel canvasPanel) {
+		this.canvasPanel = canvasPanel;
 		initAddMenu();
 		initEditMenu();
 	}
@@ -78,8 +80,8 @@ public class ContextMenu extends JPopupMenu {
 		
 		class AddShapeListener implements ActionListener {
 			public void actionPerformed(ActionEvent e) {
-				AppFrame.canvasPanel.getShapesController().addShape(e);
-				AppFrame.canvasPanel.isContextTrigger = false;
+				canvasPanel.getShapesController().addShape(e);
+				canvasPanel.isContextTrigger = false;
 			}
 		}
 		
@@ -103,7 +105,7 @@ public class ContextMenu extends JPopupMenu {
 		removeElementMenuItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				AppFrame.canvasPanel.getShapesController().removeSelectedShape();
+				canvasPanel.getShapesController().removeSelectedShape();
 			}
 		});
 		
@@ -120,8 +122,8 @@ public class ContextMenu extends JPopupMenu {
 		changeBorderWidthSlider.addChangeListener(new ChangeListener() {
 			@Override
 			public void stateChanged(ChangeEvent e) {
-				AppFrame.canvasPanel.getShapesController().changeBorderWidth(changeBorderWidthSlider.getValue());
-				AppFrame.canvasPanel.isContextTrigger = false;
+				canvasPanel.getShapesController().changeBorderWidth(changeBorderWidthSlider.getValue());
+				canvasPanel.isContextTrigger = false;
 			}
 		});
 		changeBorderWidthMenu.add(changeBorderWidthSlider);
@@ -134,8 +136,8 @@ public class ContextMenu extends JPopupMenu {
 			selectBorderColour.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					AppFrame.canvasPanel.getShapesController().changeBorderColour(colours.get(colourName));
-					AppFrame.canvasPanel.isContextTrigger = false;
+					canvasPanel.getShapesController().changeBorderColour(colours.get(colourName));
+					canvasPanel.isContextTrigger = false;
 				}
 			});
 			changeBorderColourMenu.add(selectBorderColour);
@@ -151,8 +153,8 @@ public class ContextMenu extends JPopupMenu {
 			selectFont.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					AppFrame.canvasPanel.getShapesController().changeFont(fontName);
-					AppFrame.canvasPanel.isContextTrigger = false;
+					canvasPanel.getShapesController().changeFont(fontName);
+					canvasPanel.isContextTrigger = false;
 				}
 			});
 			changeFontMenu.add(selectFont);
@@ -166,8 +168,8 @@ public class ContextMenu extends JPopupMenu {
 			selectFontStyle.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					AppFrame.canvasPanel.getShapesController().changeFontStyle(fontStyles.get(fontStyle));
-					AppFrame.canvasPanel.isContextTrigger = false;
+					canvasPanel.getShapesController().changeFontStyle(fontStyles.get(fontStyle));
+					canvasPanel.isContextTrigger = false;
 				}
 			});
 			changeFontStyleMenu.add(selectFontStyle);
@@ -192,9 +194,9 @@ public class ContextMenu extends JPopupMenu {
 			}
 			private void changeFontSize() {
 				if (!changeFontSizeField.getText().isEmpty()) {
-					AppFrame.canvasPanel.getShapesController().changeFontSize(
+					canvasPanel.getShapesController().changeFontSize(
 							Integer.parseInt(changeFontSizeField.getText()));
-					AppFrame.canvasPanel.isContextTrigger = false;
+					canvasPanel.isContextTrigger = false;
 				}
 			}
 		});
@@ -208,8 +210,8 @@ public class ContextMenu extends JPopupMenu {
 			selectFontColour.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					AppFrame.canvasPanel.getShapesController().changeFontColour(colours.get(colourName));
-					AppFrame.canvasPanel.isContextTrigger = false;
+					canvasPanel.getShapesController().changeFontColour(colours.get(colourName));
+					canvasPanel.isContextTrigger = false;
 				}
 			});
 			changeFontColourMenu.add(selectFontColour);

@@ -7,16 +7,14 @@ import java.io.File;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import org.apache.commons.io.FilenameUtils;
-
 import net.premiumrich.io.IOController;
-import net.premiumrich.main.AppFrame;
 
 public class Menubar extends JMenuBar {
 
 	private static final long serialVersionUID = 0;
 	
-	private static final IOController io = new IOController(AppFrame.canvasPanel);
+	private CanvasPanel canvasPanel;
+	private IOController ioCon;
 	
 	private JMenu fileMenu;
 	private JMenuItem fileOpenMenuItem;
@@ -26,8 +24,11 @@ public class Menubar extends JMenuBar {
 	static {
 		fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 		fileChooser.setAcceptAllFileFilterUsed(false);
-		fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Mind Maps (*.json)", "json"));
 	}
+	FileNameExtensionFilter mindMapFileFilter = new FileNameExtensionFilter("Mind Maps (*.json)", "json");
+	FileNameExtensionFilter jpgFileFilter = new FileNameExtensionFilter("JPEG Image (*.jpg)", "jpg");
+	FileNameExtensionFilter pngFileFilter = new FileNameExtensionFilter("PNG Image (*.png)", "png");
+	private JMenuItem fileExportMenuItem;
 	
 	private JMenu editMenu;
 	
@@ -35,7 +36,9 @@ public class Menubar extends JMenuBar {
 	private JMenu windowMenu;
 	private JMenu helpMenu;
 	
-	public Menubar() {
+	public Menubar(CanvasPanel canvasPanel, IOController ioCon) {
+		this.canvasPanel = canvasPanel;
+		this.ioCon = ioCon;
 		initFileMenu();
 		initEditMenu();
 		initViewMenu();
@@ -47,15 +50,20 @@ public class Menubar extends JMenuBar {
 		fileMenu = new JMenu("File");
 		this.add(fileMenu);
 		
-		fileOpenMenuItem = new JMenuItem("Open");
+		fileOpenMenuItem = new JMenuItem("Open ...");
 		fileOpenMenuItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				fileChooser.setDialogTitle("Open Mind Map");
-				fileChooser.setSelectedFile(new File(""));
-				int action = fileChooser.showOpenDialog(null);
-				if (action == JFileChooser.APPROVE_OPTION) {
-					io.handleOpen(fileChooser.getSelectedFile());
+				fileChooser.resetChoosableFileFilters();
+				fileChooser.addChoosableFileFilter(mindMapFileFilter);
+
+				// Change FileFilter selection label
+				UIManager.put("FileChooser.filesOfTypeLabelText", "File Format:");
+				SwingUtilities.updateComponentTreeUI(fileChooser);
+				
+				if (fileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+					ioCon.handleOpen(fileChooser.getSelectedFile());
 				}
 			}
 		});
@@ -65,10 +73,10 @@ public class Menubar extends JMenuBar {
 		fileSaveMenuItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if (io.fileOpened) {
-					io.handleSave(io.getCurrentFile());
+				if (ioCon.getCurrentFile() != null) {
+					ioCon.handleSave(ioCon.getCurrentFile());
 				} else
-					saveAs();
+					fileSaveAsMenuItem.doClick();
 			}
 		});
 		fileMenu.add(fileSaveMenuItem);
@@ -77,17 +85,67 @@ public class Menubar extends JMenuBar {
 		fileSaveAsMenuItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				saveAs();
+				fileChooser.setDialogTitle("Save Mind Map");
+				fileChooser.resetChoosableFileFilters();
+				fileChooser.addChoosableFileFilter(mindMapFileFilter);
+				fileChooser.setSelectedFile(new File("Untitled.json"));
+				
+				// Change FileFilter selection label
+				UIManager.put("FileChooser.filesOfTypeLabelText", "File Format:");
+				SwingUtilities.updateComponentTreeUI(fileChooser);
+				
+				if (fileChooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
+					// Append ".json" extension if missing
+					File file = fileChooser.getSelectedFile();
+					if (! file.getName().endsWith(".json"))
+					    file = new File(file.getParentFile(), file.getName() + ".json");
+					ioCon.handleSave(file);
+				}
 			}
 		});
 		fileMenu.add(fileSaveAsMenuItem);
+		
+		fileMenu.addSeparator();
+		
+		fileExportMenuItem = new JMenuItem("Export As ...");
+		fileExportMenuItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				fileChooser.setDialogTitle("Export Mind Map");
+				fileChooser.resetChoosableFileFilters();
+				fileChooser.addChoosableFileFilter(jpgFileFilter);
+				fileChooser.addChoosableFileFilter(pngFileFilter);
+				fileChooser.setSelectedFile(new File("*.*"));
+				
+				// Change FileFilter selection label
+				UIManager.put("FileChooser.filesOfTypeLabelText", "Select Export Format:");
+				SwingUtilities.updateComponentTreeUI(fileChooser);
+				
+				if (fileChooser.showDialog(null, "Export") == JFileChooser.APPROVE_OPTION) {
+					if (fileChooser.getFileFilter() == jpgFileFilter) {
+						// Append ".jpg" extension if missing
+						File file = fileChooser.getSelectedFile();
+						if (! file.getName().endsWith(".jpg"))
+						    file = new File(file.getParentFile(), file.getName() + ".jpg");
+						ioCon.handleExport(file, "jpg");
+					} else if (fileChooser.getFileFilter() == pngFileFilter) {
+						// Append ".png" extension if missing
+						File file = fileChooser.getSelectedFile();
+						if (! file.getName().endsWith(".png"))
+						    file = new File(file.getParentFile(), file.getName() + ".png");
+						ioCon.handleExport(file, "png");
+					}
+				}
+			}
+		});
+		fileMenu.add(fileExportMenuItem);
 	}
 
 	private void initEditMenu() {
 		editMenu = new JMenu("Edit");
 		this.add(editMenu);
 		
-		editMenu.add(new ContextMenu().getAddMenu());
+		editMenu.add(new ContextMenu(canvasPanel).getAddMenu());
 	}
 	
 	private void initViewMenu() {
@@ -103,21 +161,6 @@ public class Menubar extends JMenuBar {
 	private void initHelpMenu() {
 		helpMenu = new JMenu("Help");
 		this.add(helpMenu);
-	}
-	
-	// Helper methods
-	private void saveAs() {
-		fileChooser.setDialogTitle("Save Mind Map");
-		fileChooser.setSelectedFile(new File("My Mind Map.json"));
-		int action = fileChooser.showSaveDialog(null);
-		if (action == JFileChooser.APPROVE_OPTION) {
-			// Append ".json" extension if missing
-			File file = fileChooser.getSelectedFile();
-			if (! FilenameUtils.getExtension(file.getName()).equalsIgnoreCase("json")) {
-			    file = new File(file.getParentFile(), FilenameUtils.getBaseName(file.getName()) + ".json");
-			}
-			io.handleSave(file);
-		}
 	}
 	
 }

@@ -21,7 +21,7 @@ import net.premiumrich.shapes.MapShape;
 
 public class Viewport {
 
-	private CanvasPanel canvasInstance;
+	private CanvasPanel canvasPanel;
 
 	private static final int MAX_FPS = 60;
 	private long lastFrameTime = 0;
@@ -37,8 +37,8 @@ public class Viewport {
 	private Timer fpsCounterUpdater;
 	private Timer debugLabelsUpdater;
 	
-	public Viewport(CanvasPanel canvasInstance) {
-		this.canvasInstance = canvasInstance;
+	public Viewport(CanvasPanel canvasPanel) {
+		this.canvasPanel = canvasPanel;
 		initTimers();
 	}
 	
@@ -49,8 +49,8 @@ public class Viewport {
 		if (zooming) {
 			AffineTransform at = new AffineTransform();
 			
-			double xRel = MouseInfo.getPointerInfo().getLocation().getX() - canvasInstance.getX();
-			double yRel = MouseInfo.getPointerInfo().getLocation().getY() - canvasInstance.getY();
+			double xRel = MouseInfo.getPointerInfo().getLocation().getX() - canvasPanel.getX();
+			double yRel = MouseInfo.getPointerInfo().getLocation().getY() - canvasPanel.getY();
 			double zoomDiv = zoomFactor / prevZoomFactor;
 			
 			xOffset = (int) ((zoomDiv) * (xOffset) + (1 - zoomDiv) * xRel);
@@ -80,14 +80,14 @@ public class Viewport {
         }
 		
 		// Iterate and print all shapes and lines
-		for (MapShape mapShape : canvasInstance.getShapesController().getShapes()) {
+		for (MapShape mapShape : canvasPanel.getShapesController().getShapes()) {
 			if (mapShape.isHighlighted) g2d.setColor(Color.cyan);
 			else g2d.setColor(mapShape.getBorderColour());
 			g2d.setStroke(new BasicStroke(mapShape.getBorderWidth()));
 			g2d.draw(mapShape.getShape());
 			drawShapeText(g2d, mapShape);
 		}
-		for (MapLine connection : canvasInstance.getShapesController().getConnections()) {
+		for (MapLine connection : canvasPanel.getShapesController().getConnections()) {
 			connection.updateConnection();
 			g2d.draw(connection.getLine());
 		}
@@ -106,7 +106,7 @@ public class Viewport {
 	void handleRepaint() {		// A handler to limit framerate and CPU usage
 		// Calculate frame time and only repaint at the specified framerate
 		if (System.currentTimeMillis() - lastFrameTime >= (1000/MAX_FPS)) {
-			canvasInstance.repaint();
+			canvasPanel.repaint();
 			lastFrameTime = System.currentTimeMillis();
 		}
 	}
@@ -143,7 +143,7 @@ public class Viewport {
 	}
 	public void setViewportData(JsonObject viewportData) {
 		zoomFactor = viewportData.get("Zoom").getAsDouble();
-		prevZoomFactor = canvasInstance.getViewport().zoomFactor;
+		prevZoomFactor = canvasPanel.getViewport().zoomFactor;
 		xOffset = viewportData.get("xOffset").getAsInt();
 		yOffset = viewportData.get("yOffset").getAsInt();
 		panning = true;

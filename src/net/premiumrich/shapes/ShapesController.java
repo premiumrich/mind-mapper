@@ -19,7 +19,7 @@ import net.premiumrich.ui.Viewport;
 
 public class ShapesController {
 
-	private CanvasPanel canvasInstance;
+	private CanvasPanel canvasPanel;
 	private Viewport viewport;
 	
 	public Point dragStartPoint;
@@ -34,8 +34,8 @@ public class ShapesController {
 	public MapShape connectionOrigin;
 	public MapShape connectionDestination;
 	
-	public ShapesController(CanvasPanel canvasInstance, Viewport viewport) {
-		this.canvasInstance = canvasInstance;
+	public ShapesController(CanvasPanel canvasPanel, Viewport viewport) {
+		this.canvasPanel = canvasPanel;
 		this.viewport = viewport;
 		shapes = new ArrayList<MapShape>();
 		connections = new ArrayList<MapLine>();
@@ -44,13 +44,13 @@ public class ShapesController {
 	public void addShape(ActionEvent e) {
 		int xGen;		// X-coordinate on screen to create the shape
 		int yGen;		// Y-coordinate on screen to create the shape
-		if (canvasInstance.isContextTrigger) {
-			xGen = canvasInstance.contextTriggerEvent.getX() - viewport.xOffset;
-			yGen = canvasInstance.contextTriggerEvent.getY() - viewport.yOffset;
+		if (canvasPanel.isContextTrigger) {
+			xGen = canvasPanel.contextTriggerEvent.getX() - viewport.xOffset;
+			yGen = canvasPanel.contextTriggerEvent.getY() - viewport.yOffset;
 		} else {
 			Random rand = new Random();
-			xGen = rand.nextInt(canvasInstance.getWidth());
-			yGen = rand.nextInt(canvasInstance.getHeight());
+			xGen = rand.nextInt(canvasPanel.getWidth());
+			yGen = rand.nextInt(canvasPanel.getHeight());
 		}
 		switch (e.getActionCommand()) {
 		case "Ellipse":
@@ -66,7 +66,7 @@ public class ShapesController {
 		setSelectedShape(shapes.get(shapes.size()-1));
 		
 		viewport.panning = true;
-		canvasInstance.repaint();
+		canvasPanel.repaint();
 	}
 	
 	public List<MapShape> getShapesUnderCursor(Point cursor) {
@@ -83,43 +83,43 @@ public class ShapesController {
 	
 	public void removeSelectedShape() {
 		shapes.remove(selectedShape);
-		canvasInstance.repaint();
+		canvasPanel.repaint();
 	}
 	
 	public void changeBorderWidth(int borderWidth) {
 		selectedShape.setBorderWidth(borderWidth);
-		canvasInstance.repaint();
+		canvasPanel.repaint();
 	}
 	
 	public void changeBorderColour(Color borderColour) {
 		selectedShape.setBorderColour(borderColour);
-		canvasInstance.repaint();
+		canvasPanel.repaint();
 	}
 	
 	public void changeFont(String fontName) {
 		selectedShape.setTextFont(new Font(fontName, 
 									selectedShape.getTextFont().getStyle(), 
 									selectedShape.getTextFont().getSize()));
-		canvasInstance.repaint();
+		canvasPanel.repaint();
 	}
 	
 	public void changeFontStyle(int fontStyle) {
 		selectedShape.setTextFont(new Font(selectedShape.getTextFont().getFamily(), 
 									fontStyle,
 									selectedShape.getTextFont().getSize()));
-		canvasInstance.repaint();
+		canvasPanel.repaint();
 	}
 	
 	public void changeFontSize(int fontSize) {
 		selectedShape.setTextFont(new Font(selectedShape.getTextFont().getFamily(), 
 									selectedShape.getTextFont().getStyle(), 
 									fontSize));
-		canvasInstance.repaint();
+		canvasPanel.repaint();
 	}
 	
 	public void changeFontColour(Color fontColour) {
 		selectedShape.setFontColour(fontColour);
-		canvasInstance.repaint();
+		canvasPanel.repaint();
 	}
 	
 	public void newConnection(MapShape origin, MapShape termination) {
@@ -147,7 +147,7 @@ public class ShapesController {
 	}
 	public JsonArray getShapesAsJson() {
 		JsonArray shapesData = new JsonArray();
-		for (MapShape shape : canvasInstance.getShapesController().getShapes()) {
+		for (MapShape shape : canvasPanel.getShapesController().getShapes()) {
 			shapesData.add(shape.getAsJsonObj());
 		}
 		return shapesData;
