@@ -19,6 +19,10 @@ import com.google.gson.JsonObject;
 import net.premiumrich.shapes.MapLine;
 import net.premiumrich.shapes.MapShape;
 
+/**
+ * The Viewport manages and handles drawing mind map elements
+ * @author premiumrich
+ */
 public class Viewport {
 
 	private CanvasPanel canvasPanel;
@@ -27,7 +31,7 @@ public class Viewport {
 	private long lastFrameTime = 0;
 	// Zoom and pan variables
 	protected boolean zooming;
-	protected double zoomFactor = 1, prevZoomFactor = 1;
+	public double zoomFactor = 1, prevZoomFactor = 1;
 	protected boolean released;
 	public boolean panning;
 	public int xOffset = 0, yOffset = 0;
@@ -49,12 +53,12 @@ public class Viewport {
 		if (zooming) {
 			AffineTransform at = new AffineTransform();
 			
+			// Zoom relative to cursor
 			double xRel = MouseInfo.getPointerInfo().getLocation().getX() - canvasPanel.getX();
 			double yRel = MouseInfo.getPointerInfo().getLocation().getY() - canvasPanel.getY();
 			double zoomDiv = zoomFactor / prevZoomFactor;
-			
-			xOffset = (int) ((zoomDiv) * (xOffset) + (1 - zoomDiv) * xRel);
-			yOffset = (int) ((zoomDiv) * (yOffset) + (1 - zoomDiv) * yRel);
+			xOffset = (int)((zoomDiv) * (xOffset) + (1 - zoomDiv) * xRel);
+			yOffset = (int)((zoomDiv) * (yOffset) + (1 - zoomDiv) * yRel);
 			
 			at.translate(xOffset, yOffset);
 			at.scale(zoomFactor, zoomFactor);
@@ -62,9 +66,7 @@ public class Viewport {
 			
 			prevZoomFactor = zoomFactor;
 			zooming = false;
-        }
-		
-		if (panning) {
+        } else if (panning) {
 			AffineTransform at = new AffineTransform();
 			
             at.translate(xOffset + panXDiff, yOffset + panYDiff);
@@ -103,12 +105,34 @@ public class Viewport {
 		g2d.drawString(mapShape.getText(), textX, textY);
 	}
 	
-	void handleRepaint() {		// A handler to limit framerate and CPU usage
+	protected void handleRepaint() {		// A handler to limit framerate and CPU usage
 		// Calculate frame time and only repaint at the specified framerate
 		if (System.currentTimeMillis() - lastFrameTime >= (1000/MAX_FPS)) {
 			canvasPanel.repaint();
 			lastFrameTime = System.currentTimeMillis();
 		}
+	}
+	
+	// Viewport controls
+	public void pan(Point curPoint) {
+		panning = true;
+		panXDiff = curPoint.x - panStartPoint.x;
+		panYDiff = curPoint.y - panStartPoint.y;
+		handleRepaint();
+	}
+	public void zoomIn() {
+		zoomFactor *= 1.1;
+	}
+	public void zoomOut() {
+		zoomFactor /= 1.1;
+	}
+	public void centerView() {
+		xOffset = 0;
+		yOffset = 0;
+	}
+	public void resetZoom() {
+		zoomFactor = 0;
+		prevZoomFactor = 0;
 	}
 	
 	private void initTimers() {

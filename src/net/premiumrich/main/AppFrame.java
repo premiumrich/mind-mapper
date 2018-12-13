@@ -30,6 +30,12 @@ public class AppFrame extends JFrame {
 	}
 	
 	private void initComponents() {
+		try {
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
 		pickerPanel = new PickerPanel();
 		this.add(pickerPanel, BorderLayout.WEST);
 		

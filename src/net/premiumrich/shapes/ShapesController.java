@@ -45,8 +45,9 @@ public class ShapesController {
 		int xGen;		// X-coordinate on screen to create the shape
 		int yGen;		// Y-coordinate on screen to create the shape
 		if (canvasPanel.isContextTrigger) {
-			xGen = canvasPanel.contextTriggerEvent.getX() - viewport.xOffset;
-			yGen = canvasPanel.contextTriggerEvent.getY() - viewport.yOffset;
+			// Offset cursor to be consistent with shape location in viewport
+			xGen = (int) ((canvasPanel.contextTriggerEvent.getX() - viewport.xOffset) / viewport.zoomFactor);
+			yGen = (int) ((canvasPanel.contextTriggerEvent.getY() - viewport.yOffset) / viewport.zoomFactor);
 		} else {
 			Random rand = new Random();
 			xGen = rand.nextInt(canvasPanel.getWidth());
@@ -65,20 +66,8 @@ public class ShapesController {
 		setSelectedShape(null);
 		setSelectedShape(shapes.get(shapes.size()-1));
 		
-		viewport.panning = true;
+//		viewport.panning = true;
 		canvasPanel.repaint();
-	}
-	
-	public List<MapShape> getShapesUnderCursor(Point cursor) {
-		// Offset cursor to be consistent with shape location
-		cursor.translate(-(int)viewport.xOffset, -(int)viewport.yOffset);
-		
-		List<MapShape> shapesUnderCursor = new ArrayList<MapShape>();
-		for (MapShape shape : shapes) {
-			if (shape.getShape().getBounds().contains(cursor))
-				shapesUnderCursor.add(shape);
-		}
-		return shapesUnderCursor;
 	}
 	
 	public void removeSelectedShape() {
@@ -130,6 +119,19 @@ public class ShapesController {
 	// Getters and setters
 	public List<MapShape> getShapes() {
 		return shapes;
+	}
+	public List<MapShape> getShapesUnderCursor(Point cursor) {
+		// Offset cursor to be consistent with shape location in viewport
+		cursor.translate(-(int)viewport.xOffset, -(int)viewport.yOffset);
+		cursor.x /= viewport.zoomFactor;
+		cursor.y /= viewport.zoomFactor;
+		
+		List<MapShape> shapesUnderCursor = new ArrayList<MapShape>();
+		for (MapShape shape : shapes) {
+			if (shape.getShape().getBounds().contains(cursor))
+				shapesUnderCursor.add(shape);
+		}
+		return shapesUnderCursor;
 	}
 	public MapShape getSelectedShape() {
 		return selectedShape;

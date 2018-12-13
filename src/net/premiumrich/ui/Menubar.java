@@ -81,7 +81,7 @@ public class Menubar extends JMenuBar {
 		});
 		fileMenu.add(fileSaveMenuItem);
 		
-		fileSaveAsMenuItem = new JMenuItem("Save As");
+		fileSaveAsMenuItem = new JMenuItem("Save As ...");
 		fileSaveAsMenuItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -97,7 +97,7 @@ public class Menubar extends JMenuBar {
 				if (fileChooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
 					// Append ".json" extension if missing
 					File file = fileChooser.getSelectedFile();
-					if (! file.getName().endsWith(".json"))
+					if (! file.getName().toLowerCase().endsWith(".json"))
 					    file = new File(file.getParentFile(), file.getName() + ".json");
 					ioCon.handleSave(file);
 				}
@@ -125,13 +125,13 @@ public class Menubar extends JMenuBar {
 					if (fileChooser.getFileFilter() == jpgFileFilter) {
 						// Append ".jpg" extension if missing
 						File file = fileChooser.getSelectedFile();
-						if (! file.getName().endsWith(".jpg"))
+						if (! file.getName().toLowerCase().endsWith(".jpg"))
 						    file = new File(file.getParentFile(), file.getName() + ".jpg");
 						ioCon.handleExport(file, "jpg");
 					} else if (fileChooser.getFileFilter() == pngFileFilter) {
 						// Append ".png" extension if missing
 						File file = fileChooser.getSelectedFile();
-						if (! file.getName().endsWith(".png"))
+						if (! file.getName().toLowerCase().endsWith(".png"))
 						    file = new File(file.getParentFile(), file.getName() + ".png");
 						ioCon.handleExport(file, "png");
 					}

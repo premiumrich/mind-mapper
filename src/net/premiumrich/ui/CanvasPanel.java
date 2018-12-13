@@ -7,6 +7,10 @@ import javax.swing.*;
 
 import net.premiumrich.shapes.*;
 
+/**
+ * The CanvasPanel controls all mind map elements and listeners
+ * @author premiumrich
+ */
 public class CanvasPanel extends JPanel implements MouseListener, MouseMotionListener, MouseWheelListener {
 	
 	private static final long serialVersionUID = 0;
@@ -39,10 +43,9 @@ public class CanvasPanel extends JPanel implements MouseListener, MouseMotionLis
 	
 	// Mouse activity listeners
 	public void mousePressed(MouseEvent e) {
+		viewport.panStartPoint = e.getLocationOnScreen();
 		popup(e);
 		if (!contextMenu.isVisible()) isContextTrigger = false;
-		viewport.panStartPoint = e.getLocationOnScreen();
-		viewport.panning = true;
 		viewport.released = false;
 		
 		// Select the shape that is clicked on
@@ -66,19 +69,13 @@ public class CanvasPanel extends JPanel implements MouseListener, MouseMotionLis
 	}
 	public void mouseDragged(MouseEvent e) {
 		if (shapeCon.getSelectedShape() == null && !isContextTrigger) {		// Pan the canvas
-			viewport.panning = true;
-			
-			Point curPoint = e.getLocationOnScreen();
-			viewport.panXDiff = curPoint.x - viewport.panStartPoint.x;
-			viewport.panYDiff = curPoint.y - viewport.panStartPoint.y;
-			
-			viewport.handleRepaint();
-		} else {						// Drag the selected shape
+			viewport.pan(e.getLocationOnScreen());
+		} else {															// Drag the selected shape
 			Point curPoint = e.getLocationOnScreen();
 			if (curPoint.x  != shapeCon.dragStartPoint.x || curPoint.y != shapeCon.dragStartPoint.y) {
 				shapeCon.selectedShape.setNewCoordinates(
-							shapeCon.selectedShape.getX() + (curPoint.x - shapeCon.dragStartPoint.x), 
-							shapeCon.selectedShape.getY() + (curPoint.y - shapeCon.dragStartPoint.y));
+						shapeCon.selectedShape.getX() + (int)((curPoint.x - shapeCon.dragStartPoint.x)/viewport.zoomFactor), 
+						shapeCon.selectedShape.getY() + (int)((curPoint.y - shapeCon.dragStartPoint.y)/viewport.zoomFactor));
 				shapeCon.dragStartPoint = e.getLocationOnScreen();			// Update drag diff reference
 			}
 			viewport.handleRepaint();
@@ -86,13 +83,12 @@ public class CanvasPanel extends JPanel implements MouseListener, MouseMotionLis
 	}
 	public void mouseWheelMoved(MouseWheelEvent e) {
 		if (!isContextTrigger) {
+			if (e.getWheelRotation() < 0) {				// Mouse wheel rolls forward
+				viewport.zoomIn();
+			} else if (e.getWheelRotation() > 0) {		// Mouse wheel rolls backwards
+				viewport.zoomOut();
+			}
 			viewport.zooming = true;
-			if (e.getWheelRotation() < 0) {		// Zoom in
-				viewport.zoomFactor *= 1.1;
-			}
-			if (e.getWheelRotation() > 0) {		// Zoom out
-				viewport.zoomFactor /= 1.1;
-			}
 			viewport.handleRepaint();
 		}
 	}
