@@ -9,6 +9,10 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import net.premiumrich.io.IOController;
 
+/**
+ * The Menubar manages the menu bar and handles actions, including the open, save and export dialogs
+ * @author premiumrich
+ */
 public class Menubar extends JMenuBar {
 
 	private static final long serialVersionUID = 0;

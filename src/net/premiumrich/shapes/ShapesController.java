@@ -14,6 +14,10 @@ import com.google.gson.JsonObject;
 import net.premiumrich.ui.CanvasPanel;
 import net.premiumrich.ui.Viewport;
 
+/**
+ * The ShapesController manages and controls mind map elements
+ * @author premiumrich
+ */
 public class ShapesController {
 
 	private CanvasPanel canvasPanel;

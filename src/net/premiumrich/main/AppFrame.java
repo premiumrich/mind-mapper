@@ -7,6 +7,10 @@ import javax.swing.*;
 import net.premiumrich.io.IOController;
 import net.premiumrich.ui.*;
 
+/**
+ * The AppFrame constructs and manages the main frame
+ * @author premiumrich
+ */
 public class AppFrame extends JFrame {
 
 	private static final long serialVersionUID = 0;

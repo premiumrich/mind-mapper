@@ -19,6 +19,10 @@ import net.premiumrich.shapes.MapShape;
 import java.awt.Color;
 import java.awt.Font;
 
+/**
+ * The ContextMenu manages and handles actions in the right-click menu
+ * @author premiumrich
+ */
 public class ContextMenu extends JPopupMenu {
 
 	private static final long serialVersionUID = 0;

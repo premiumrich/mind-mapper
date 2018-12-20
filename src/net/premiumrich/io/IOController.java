@@ -11,6 +11,10 @@ import javax.imageio.ImageIO;
 import net.premiumrich.main.AppFrame;
 import net.premiumrich.ui.CanvasPanel;
 
+/**
+ * The IOController handles the opening, saving and exporting of mind maps 
+ * @author premiumrich
+ */
 public class IOController {
 	
 	private AppFrame appFrame;
