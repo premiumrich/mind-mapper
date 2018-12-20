@@ -3,12 +3,9 @@ package net.premiumrich.shapes;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Point;
-import java.awt.event.ActionEvent;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -41,33 +38,53 @@ public class ShapesController {
 		connections = new ArrayList<MapLine>();
 	}
 	
-	public void addShape(ActionEvent e) {
-		int xGen;		// X-coordinate on screen to create the shape
-		int yGen;		// Y-coordinate on screen to create the shape
+	public void addShape(String shapeType) {
+		int shapeWidth = 200, shapeHeight = 100;
+		Point p = new Point();				// Point on screen to create the shape
 		if (canvasPanel.isContextTrigger) {
 			// Offset cursor to be consistent with shape location in viewport
-			xGen = (int) ((canvasPanel.contextTriggerEvent.getX() - viewport.xOffset) / viewport.zoomFactor);
-			yGen = (int) ((canvasPanel.contextTriggerEvent.getY() - viewport.yOffset) / viewport.zoomFactor);
+			p.x = (int) ((canvasPanel.contextTriggerEvent.getX() - viewport.xOffset) / viewport.zoomFactor);
+			p.y = (int) ((canvasPanel.contextTriggerEvent.getY() - viewport.yOffset) / viewport.zoomFactor);
 		} else {
-			Random rand = new Random();
-			xGen = rand.nextInt(canvasPanel.getWidth());
-			yGen = rand.nextInt(canvasPanel.getHeight());
+			// Start from center and find vacant location
+			p.x = canvasPanel.getWidth()/2;
+			p.y = canvasPanel.getHeight()/2;
+			p = findVacantPoint(p);
 		}
-		switch (e.getActionCommand()) {
-		case "Ellipse":
-			shapes.add(new EllipseShape(xGen, yGen, 200, 100));
-			break;
-		case "Rectangle":
-			shapes.add(new RectangleShape(xGen, yGen, 200, 100));
-			break;
+		
+		try {
+			// Create new MapShape at center of point using Java reflection
+			Class<?> newMapShapeClass = Class.forName(shapeType);
+			Constructor<?> newMapShapeCons = newMapShapeClass.getConstructor(
+												new Class<?>[] {int.class, int.class, int.class, int.class});
+			Object[] newMapShapeParameters = {p.x-(shapeWidth/2), p.y-(shapeHeight/2), shapeWidth, shapeHeight};
+			shapes.add( (MapShape)newMapShapeCons.newInstance(newMapShapeParameters) );
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 		
 		// Select the newly added shape
 		setSelectedShape(null);
-		setSelectedShape(shapes.get(shapes.size()-1));
+		setSelectedShape(shapes.get(shapes.size() - 1));
 		
-//		viewport.panning = true;
 		canvasPanel.repaint();
+	}
+	
+	/**
+	 * Recursively check if point is already occupied by a shape and offset southeast if true
+	 * @param p Starting point
+	 * @return Vacant point
+	 */
+	private Point findVacantPoint(Point p) {
+		for (MapShape shape : shapes) {
+			Point shapeLocation = shape.getShape().getBounds().getLocation();
+			shapeLocation.translate(shape.getShape().getBounds().width/2, shape.getShape().getBounds().height/2);
+			if (p.equals(shapeLocation)) {
+				p.translate(20, 20);
+				return findVacantPoint(p);
+			}
+		}
+		return p;
 	}
 	
 	public void removeSelectedShape() {
@@ -164,11 +181,11 @@ public class ShapesController {
 			try {
 				// Create new MapShape from Json string using Java reflection
 				Class<?> newMapShapeClass = Class.forName(thisShape.get("Type").getAsString());
-				Constructor<?> newMapShapeConstructor = newMapShapeClass.getConstructor(
-						new Class<?>[] {int.class, int.class, int.class, int.class});
+				Constructor<?> newMapShapeCons = newMapShapeClass.getConstructor(
+													new Class<?>[] {int.class, int.class, int.class, int.class});
 				Object[] newMapShapeParameters = {thisShape.get("X").getAsInt(), thisShape.get("Y").getAsInt(), 
 										thisShape.get("Width").getAsInt(), thisShape.get("Height").getAsInt()};
-				MapShape newMapShape = (MapShape)newMapShapeConstructor.newInstance(newMapShapeParameters);
+				MapShape newMapShape = (MapShape)newMapShapeCons.newInstance(newMapShapeParameters);
 				
 				newMapShape.setBorderColour(Color.decode(thisShape.get("Border colour").getAsString()));
 				newMapShape.setText(thisShape.get("Text").getAsString());
@@ -178,8 +195,7 @@ public class ShapesController {
 				newMapShape.setFontColour(Color.decode(thisShape.get("Font colour").getAsString()));
 				
 				shapes.add(newMapShape);
-			} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | 
-					NoSuchMethodException | InvocationTargetException e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}

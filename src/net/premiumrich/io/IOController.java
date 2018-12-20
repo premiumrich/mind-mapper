@@ -42,7 +42,7 @@ public class IOController {
 	public void handleExport(File file, String imgType) {
 		System.out.print("Exporting to " + file.getAbsolutePath() + " ... ");
 		// Upscale exported image 4x to increase quality and enable transparency if exporting to PNG
-		BufferedImage image = new BufferedImage(canvasPanel.getWidth()*4, canvasPanel.getHeight()*4, 
+		BufferedImage image = new BufferedImage(canvasPanel.getWidth() * 4, canvasPanel.getHeight() * 4, 
 												imgType == "png" ? BufferedImage.TYPE_INT_ARGB : BufferedImage.TYPE_INT_RGB);
 		Graphics2D g2d = image.createGraphics();
 		// Increase quality of exported image
@@ -54,7 +54,7 @@ public class IOController {
 		g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
 		g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
 		g2d.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
-		g2d.scale(4, 4);
+		g2d.scale(4, 4);		// Upscale 4x
 		canvasPanel.printAll(g2d);
 		try {
 		    ImageIO.write(image, imgType, file);

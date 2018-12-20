@@ -78,21 +78,23 @@ public class ContextMenu extends JPopupMenu {
 		addMenu = new JMenu("Add ...");
 		this.add(addMenu);
 		
-		class AddShapeListener implements ActionListener {
-			public void actionPerformed(ActionEvent e) {
-				canvasPanel.getShapesController().addShape(e);
-				canvasPanel.isContextTrigger = false;
-			}
-		}
-		
 		addEllipseMenuItem = new JMenuItem("Ellipse shape");
-		addEllipseMenuItem.setActionCommand("Ellipse");
-		addEllipseMenuItem.addActionListener(new AddShapeListener());
+		addEllipseMenuItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				canvasPanel.getShapesController().addShape("net.premiumrich.shapes.EllipseShape");
+			}
+		});
 		addMenu.add(addEllipseMenuItem);
 		
 		addRectangleMenuItem = new JMenuItem("Rectangle shape");
 		addRectangleMenuItem.setActionCommand("Rectangle");
-		addRectangleMenuItem.addActionListener(new AddShapeListener());
+		addRectangleMenuItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				canvasPanel.getShapesController().addShape("net.premiumrich.shapes.RectangleShape");
+			}
+		});
 		addMenu.add(addRectangleMenuItem);
 	}
 	
@@ -123,7 +125,6 @@ public class ContextMenu extends JPopupMenu {
 			@Override
 			public void stateChanged(ChangeEvent e) {
 				canvasPanel.getShapesController().changeBorderWidth(changeBorderWidthSlider.getValue());
-				canvasPanel.isContextTrigger = false;
 			}
 		});
 		changeBorderWidthMenu.add(changeBorderWidthSlider);
@@ -137,7 +138,6 @@ public class ContextMenu extends JPopupMenu {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					canvasPanel.getShapesController().changeBorderColour(colours.get(colourName));
-					canvasPanel.isContextTrigger = false;
 				}
 			});
 			changeBorderColourMenu.add(selectBorderColour);
@@ -154,7 +154,6 @@ public class ContextMenu extends JPopupMenu {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					canvasPanel.getShapesController().changeFont(fontName);
-					canvasPanel.isContextTrigger = false;
 				}
 			});
 			changeFontMenu.add(selectFont);
@@ -169,7 +168,6 @@ public class ContextMenu extends JPopupMenu {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					canvasPanel.getShapesController().changeFontStyle(fontStyles.get(fontStyle));
-					canvasPanel.isContextTrigger = false;
 				}
 			});
 			changeFontStyleMenu.add(selectFontStyle);
@@ -193,10 +191,10 @@ public class ContextMenu extends JPopupMenu {
 			public void changedUpdate(DocumentEvent e) {
 			}
 			private void changeFontSize() {
-				if (!changeFontSizeField.getText().isEmpty()) {
-					canvasPanel.getShapesController().changeFontSize(
-							Integer.parseInt(changeFontSizeField.getText()));
-					canvasPanel.isContextTrigger = false;
+				// Parse as int if the text field only contains numbers
+				if (changeFontSizeField.getText().matches("^\\d+$")) {
+					canvasPanel.getShapesController()
+									.changeFontSize(Integer.parseInt(changeFontSizeField.getText()));
 				}
 			}
 		});
@@ -211,7 +209,6 @@ public class ContextMenu extends JPopupMenu {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					canvasPanel.getShapesController().changeFontColour(colours.get(colourName));
-					canvasPanel.isContextTrigger = false;
 				}
 			});
 			changeFontColourMenu.add(selectFontColour);

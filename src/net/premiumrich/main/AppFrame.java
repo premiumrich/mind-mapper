@@ -45,7 +45,7 @@ public class AppFrame extends JFrame {
 		ioCon = new IOController(this, canvasPanel);
 		
 		menubar = new Menubar(canvasPanel, ioCon);
-		this.add(menubar, BorderLayout.NORTH);
+		this.setJMenuBar(menubar);
 	}
 	
 	public void setOpenedFileName(String fileName) {

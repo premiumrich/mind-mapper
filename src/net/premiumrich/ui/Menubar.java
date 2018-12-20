@@ -29,6 +29,7 @@ public class Menubar extends JMenuBar {
 	FileNameExtensionFilter jpgFileFilter = new FileNameExtensionFilter("JPEG Image (*.jpg)", "jpg");
 	FileNameExtensionFilter pngFileFilter = new FileNameExtensionFilter("PNG Image (*.png)", "png");
 	private JMenuItem fileExportMenuItem;
+	private JMenuItem fileExitMenuItem;
 	
 	private JMenu editMenu;
 	
@@ -139,6 +140,17 @@ public class Menubar extends JMenuBar {
 			}
 		});
 		fileMenu.add(fileExportMenuItem);
+		
+		fileMenu.addSeparator();
+		
+		fileExitMenuItem = new JMenuItem("Exit");
+		fileExitMenuItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				System.exit(0);
+			}
+		});
+		fileMenu.add(fileExitMenuItem);
 	}
 
 	private void initEditMenu() {
