@@ -13,6 +13,7 @@ public class EllipseShape extends MapShape {
 		this.x = x;
 		this.y = y;
 		shape = new Ellipse2D.Double(x, y, shape.getBounds().width, shape.getBounds().height);
+		updateTextFieldBounds();
 	}
 	
 }

@@ -2,7 +2,6 @@ package net.premiumrich.ui;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
-import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.MouseInfo;
@@ -87,7 +86,7 @@ public class Viewport {
 			else g2d.setColor(mapShape.getBorderColour());
 			g2d.setStroke(new BasicStroke(mapShape.getBorderWidth()));
 			g2d.draw(mapShape.getShape());
-			drawShapeText(g2d, mapShape);
+			drawShapeText(g, mapShape);
 		}
 		for (MapLine connection : canvasPanel.getShapesController().getConnections()) {
 			connection.updateConnection();
@@ -95,14 +94,16 @@ public class Viewport {
 		}
 	}
 
-	private void drawShapeText(Graphics2D g2d, MapShape mapShape) {
-		g2d.setColor(mapShape.getFontColour());
-		FontMetrics metrics = g2d.getFontMetrics(mapShape.getTextFont());
-		int textX = mapShape.getX() + (mapShape.getShape().getBounds().width - metrics.stringWidth(mapShape.getText()))/2;
-	    int textY = mapShape.getY() + ((mapShape.getShape().getBounds().height - metrics.getHeight())/2) 
-	    			+ metrics.getAscent();
-		g2d.setFont(mapShape.getTextFont());
-		g2d.drawString(mapShape.getText(), textX, textY);
+	private void drawShapeText(Graphics g, MapShape mapShape) {
+		// Offset the location of text fields
+		mapShape.getTextField().setBounds(mapShape.getX() + mapShape.getShape().getBounds().width/2 - 100 + xOffset, 
+											mapShape.getY() + mapShape.getShape().getBounds().height/2 - 50 + yOffset,
+											200, 100);
+		Graphics2D textGraphics = (Graphics2D) g.create(mapShape.getTextField().getBounds().x - xOffset, 
+											mapShape.getTextField().getBounds().y - yOffset, 
+											mapShape.getTextField().getBounds().width, 
+											mapShape.getTextField().getBounds().height);
+		mapShape.getTextField().paint(textGraphics);
 	}
 	
 	protected void handleRepaint() {		// A handler to limit framerate and CPU usage

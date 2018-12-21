@@ -142,6 +142,7 @@ public class ContextMenu extends JPopupMenu {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					canvasPanel.getShapesController().changeBorderColour(colours.get(colourName));
+					canvasPanel.getShapesController().setSelectedShape(null);
 				}
 			});
 			changeBorderColourMenu.add(selectBorderColour);
@@ -158,6 +159,7 @@ public class ContextMenu extends JPopupMenu {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					canvasPanel.getShapesController().changeFont(fontName);
+					canvasPanel.getShapesController().setSelectedShape(null);
 				}
 			});
 			changeFontMenu.add(selectFont);
@@ -172,6 +174,7 @@ public class ContextMenu extends JPopupMenu {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					canvasPanel.getShapesController().changeFontStyle(fontStyles.get(fontStyle));
+					canvasPanel.getShapesController().setSelectedShape(null);
 				}
 			});
 			changeFontStyleMenu.add(selectFontStyle);
@@ -213,6 +216,7 @@ public class ContextMenu extends JPopupMenu {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					canvasPanel.getShapesController().changeFontColour(colours.get(colourName));
+					canvasPanel.getShapesController().setSelectedShape(null);
 				}
 			});
 			changeFontColourMenu.add(selectFontColour);
@@ -222,7 +226,7 @@ public class ContextMenu extends JPopupMenu {
 	public void updateEditMenuValues(MapShape selectedShape) {
 		// Update border width and font size values for the selected shape
 		changeBorderWidthSlider.setValue(selectedShape.getBorderWidth());
-		changeFontSizeField.setText(Integer.toString(selectedShape.getTextFont().getSize()));
+		changeFontSizeField.setText(Integer.toString(selectedShape.getTextField().getFont().getSize()));
 	}
 	
 	public JMenu getAddMenu() {

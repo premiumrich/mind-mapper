@@ -1,11 +1,14 @@
 package net.premiumrich.ui;
 
+import java.awt.Component;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
+
+import javax.swing.JTextField;
 
 import net.premiumrich.shapes.ShapesController;
 
@@ -26,28 +29,30 @@ public class MindMapListener implements MouseListener, MouseMotionListener, Mous
 	}
 	
 	// Mouse activity listeners
-	public void mousePressed(MouseEvent e) {
-		viewport.panStartPoint = e.getLocationOnScreen();
-		triggerContext(e);
+	public void mousePressed(MouseEvent evt) {
+		viewport.panStartPoint = evt.getLocationOnScreen();
+		triggerContext(evt);
 		if (!canvasPanel.getContextMenu().isVisible()) canvasPanel.isContextTrigger = false;
 		viewport.released = false;
 		
 		// Select the shape that is clicked on
-		if (shapeCon.getShapesUnderCursor(e.getPoint()).size() > 0) {
-			shapeCon.dragStartPoint = e.getLocationOnScreen();			// Update drag diff reference
-			if (shapeCon.shapeSelectionIndex > shapeCon.getShapesUnderCursor(e.getPoint()).size() - 1)
+		if (shapeCon.getShapesUnderCursor(evt.getPoint()).size() > 0) {
+			shapeCon.dragStartPoint = evt.getLocationOnScreen();			// Update drag diff reference
+			if (shapeCon.shapeSelectionIndex > shapeCon.getShapesUnderCursor(evt.getPoint()).size() - 1)
 				shapeCon.shapeSelectionIndex = 0;		// Prevent index overflow by restarting cycle
 			shapeCon.prevSelectedShape = shapeCon.selectedShape;
 			if (shapeCon.prevSelectedShape != null) shapeCon.prevSelectedShape.isHighlighted = false;
-			shapeCon.setSelectedShape(shapeCon.getShapesUnderCursor(e.getPoint()).get(shapeCon.shapeSelectionIndex));
+			shapeCon.setSelectedShape(shapeCon.getShapesUnderCursor(evt.getPoint()).get(shapeCon.shapeSelectionIndex));
 			shapeCon.shapeSelectionIndex++;				// Increment index to select overlapped shapes
 		} else {	// Remove the selection
-			shapeCon.shapeSelectionIndex = 0;
+			for (Component con : canvasPanel.getComponents()) {
+				if (con instanceof JTextField) canvasPanel.remove(con);		// Remove all text fields
+			}
 			shapeCon.setSelectedShape(null);
 		}
 	}
-	public void mouseReleased(MouseEvent e) {
-		triggerContext(e);
+	public void mouseReleased(MouseEvent evt) {
+		triggerContext(evt);
 		viewport.released = true;
 		canvasPanel.repaint();		// Bypass FPS limiter and force repaint to lock in position
 	}
@@ -65,32 +70,38 @@ public class MindMapListener implements MouseListener, MouseMotionListener, Mous
 			viewport.handleRepaint();
 		}
 	}
-	public void mouseWheelMoved(MouseWheelEvent e) {
+	public void mouseWheelMoved(MouseWheelEvent evt) {
 		if (!canvasPanel.isContextTrigger) {
-			if (e.getWheelRotation() < 0) {				// Mouse wheel rolls forward
+			if (evt.getWheelRotation() < 0) {				// Mouse wheel rolls forward
 				viewport.zoomIn();
-			} else if (e.getWheelRotation() > 0) {		// Mouse wheel rolls backwards
+			} else if (evt.getWheelRotation() > 0) {		// Mouse wheel rolls backwards
 				viewport.zoomOut();
 			}
 			viewport.zooming = true;
 			viewport.handleRepaint();
 		}
 	}
-	public void mouseMoved(MouseEvent e) {
+	public void mouseClicked(MouseEvent evt) {
+		// Handle double-click
+		if (evt.getClickCount() == 2 && shapeCon.getSelectedShape() != null) {
+			canvasPanel.add(shapeCon.getSelectedShape().getTextField());
+			shapeCon.getSelectedShape().getTextField().requestFocusInWindow();
+			shapeCon.getSelectedShape().getTextField().selectAll();
+		}
 	}
-	public void mouseClicked(MouseEvent e) {
+	public void mouseMoved(MouseEvent evt) {
 	}
-	public void mouseEntered(MouseEvent e) {
+	public void mouseEntered(MouseEvent evt) {
 	}
-	public void mouseExited(MouseEvent e) {
+	public void mouseExited(MouseEvent evt) {
 	}
 	
 	// Popup context menu on right click
-	private void triggerContext(MouseEvent e) {
-		if (e.isPopupTrigger()) {
+	private void triggerContext(MouseEvent evt) {
+		if (evt.isPopupTrigger()) {
 			canvasPanel.isContextTrigger = true;
-			canvasPanel.contextTriggerEvent = e;
-			canvasPanel.popup(e);
+			canvasPanel.contextTriggerEvent = evt;
+			canvasPanel.popup(evt);
 		}
 	}
 	

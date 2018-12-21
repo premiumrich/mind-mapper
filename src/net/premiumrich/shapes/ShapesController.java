@@ -107,28 +107,28 @@ public class ShapesController {
 	}
 	
 	public void changeFont(String fontName) {
-		selectedShape.setTextFont(new Font(fontName, 
-									selectedShape.getTextFont().getStyle(), 
-									selectedShape.getTextFont().getSize()));
+		selectedShape.getTextField().setFont(new Font(fontName, 
+									selectedShape.getTextField().getFont().getStyle(), 
+									selectedShape.getTextField().getFont().getSize()));
 		canvasPanel.repaint();
 	}
 	
 	public void changeFontStyle(int fontStyle) {
-		selectedShape.setTextFont(new Font(selectedShape.getTextFont().getFamily(), 
+		selectedShape.getTextField().setFont(new Font(selectedShape.getTextField().getFont().getFamily(), 
 									fontStyle,
-									selectedShape.getTextFont().getSize()));
+									selectedShape.getTextField().getFont().getSize()));
 		canvasPanel.repaint();
 	}
 	
 	public void changeFontSize(int fontSize) {
-		selectedShape.setTextFont(new Font(selectedShape.getTextFont().getFamily(), 
-									selectedShape.getTextFont().getStyle(), 
+		selectedShape.getTextField().setFont(new Font(selectedShape.getTextField().getFont().getFamily(), 
+									selectedShape.getTextField().getFont().getStyle(), 
 									fontSize));
 		canvasPanel.repaint();
 	}
 	
 	public void changeFontColour(Color fontColour) {
-		selectedShape.setFontColour(fontColour);
+		selectedShape.getTextField().setForeground(fontColour);
 		canvasPanel.repaint();
 	}
 	
@@ -160,10 +160,11 @@ public class ShapesController {
 	public void setSelectedShape(MapShape selectedShape) {
 		this.selectedShape = selectedShape;
 		if (prevSelectedShape != null) prevSelectedShape.isHighlighted = false;
-		if (selectedShape != null)
-			selectedShape.isHighlighted = true;
-		else
+		if (selectedShape != null) selectedShape.isHighlighted = true;
+		else {		// If null is passed in, disable highlight for all shapes
 			for (MapShape shape : shapes) shape.isHighlighted = false;
+			shapeSelectionIndex = 0;
+		}
 	}
 	public List<MapLine> getConnections() {
 		return connections;
@@ -192,11 +193,11 @@ public class ShapesController {
 				MapShape newMapShape = (MapShape)newMapShapeCons.newInstance(newMapShapeParameters);
 				
 				newMapShape.setBorderColour(Color.decode(thisShape.get("Border colour").getAsString()));
-				newMapShape.setText(thisShape.get("Text").getAsString());
-				newMapShape.setTextFont(new Font(thisShape.get("Text font name").getAsString(), 
+				newMapShape.getTextField().setText(thisShape.get("Text").getAsString());
+				newMapShape.getTextField().setFont(new Font(thisShape.get("Text font name").getAsString(), 
 													thisShape.get("Text font style").getAsInt(), 
 													thisShape.get("Text font size").getAsInt()));
-				newMapShape.setFontColour(Color.decode(thisShape.get("Font colour").getAsString()));
+				newMapShape.getTextField().setForeground(Color.decode(thisShape.get("Font colour").getAsString()));
 				
 				shapes.add(newMapShape);
 			} catch (Exception e) {

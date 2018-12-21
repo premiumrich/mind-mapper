@@ -55,9 +55,5 @@ public class AppFrame extends JFrame {
 	public void setOpenedFileName(String fileName) {
 		this.setTitle(fileName + " - " + appName);
 	}
-	
-	public CanvasPanel getCanvasPanel() {
-		return canvasPanel;
-	}
 
 }

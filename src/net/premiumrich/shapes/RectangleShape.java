@@ -13,6 +13,7 @@ public class RectangleShape extends MapShape {
 		this.x = x;
 		this.y = y;
 		shape = new Rectangle2D.Double(x, y, shape.getBounds().width, shape.getBounds().height);
+		updateTextFieldBounds();
 	}
 	
 }
