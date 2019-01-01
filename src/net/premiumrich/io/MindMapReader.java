@@ -16,7 +16,7 @@ public class MindMapReader {
 		try {
 			reader = new JsonReader(new FileReader(inFile));
 			data = gson.fromJson(reader, JsonObject.class);
-			System.out.println("Success!");
+			System.out.println("Success");
 		} catch (IOException e) {
 			System.out.println("File not found! " + e);
 		}

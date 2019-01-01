@@ -22,13 +22,13 @@ public abstract class MapShape {
 		this.x = shape.getBounds().x;
 		this.y = shape.getBounds().y;
 		// Defaults
-		setBorderWidth(3);
+		borderWidth = 3;
 		borderColour = Color.black;
 		textField = new JTextField("Example");
 		textField.setFont(new Font("Serif", Font.PLAIN, 12));
 		textField.setForeground(Color.black);
-		textField.setBorder(null);		// Remove border
-		textField.setOpaque(false);
+		textField.setBorder(null);			// Remove border
+		textField.setOpaque(false);			// Transparent background for text field
 		textField.setHorizontalAlignment(JTextField.CENTER);
 		updateTextFieldBounds();
 	}

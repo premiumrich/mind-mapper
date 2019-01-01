@@ -48,12 +48,23 @@ public class AppFrame extends JFrame {
 		
 		ioCon = new IOController(this, canvasPanel);
 		
-		menubar = new Menubar(canvasPanel, ioCon);
+		menubar = new Menubar(this);
 		this.setJMenuBar(menubar);
 	}
 	
 	public void setOpenedFileName(String fileName) {
 		this.setTitle(fileName + " - " + appName);
+	}
+	
+	// Getters
+	public IOController getIOCon() {
+		return ioCon;
+	}
+	public CanvasPanel getCanvasPanel() {
+		return canvasPanel;
+	}
+	public PickerPanel getPickerPanel() {
+		return pickerPanel;
 	}
 
 }

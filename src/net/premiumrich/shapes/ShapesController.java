@@ -7,6 +7,9 @@ import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -19,25 +22,30 @@ import net.premiumrich.ui.Viewport;
  * @author premiumrich
  */
 public class ShapesController {
-
-	private CanvasPanel canvasPanel;
-	private Viewport viewport;
 	
 	public Point dragStartPoint;
 	
 	private List<MapShape> shapes;
-	public MapShape selectedShape;
-	public MapShape prevSelectedShape;
+	private MapShape selectedShape;
+	private MapShape prevSelectedShape;
 	public int shapeSelectionIndex = 0;
+	private MapShape editingShape;
 	
 	public boolean isConnecting;
 	private List<MapLine> connections;
 	public MapShape connectionOrigin;
 	public MapShape connectionDestination;
+
+	private CanvasPanel canvasPanel;
+	private Viewport viewport;
 	
 	public ShapesController(CanvasPanel canvasPanel, Viewport viewport) {
 		this.canvasPanel = canvasPanel;
 		this.viewport = viewport;
+		reset();
+	}
+	
+	public void reset() {
 		shapes = new ArrayList<MapShape>();
 		connections = new ArrayList<MapLine>();
 	}
@@ -62,14 +70,30 @@ public class ShapesController {
 			Constructor<?> newMapShapeCons = newMapShapeClass.getConstructor(
 												new Class<?>[] {int.class, int.class, int.class, int.class});
 			Object[] newMapShapeParameters = {p.x-(shapeWidth/2), p.y-(shapeHeight/2), shapeWidth, shapeHeight};
-			shapes.add( (MapShape)newMapShapeCons.newInstance(newMapShapeParameters) );
+			MapShape newMapShape = (MapShape)newMapShapeCons.newInstance(newMapShapeParameters);
+			
+			// Continously repaint panel when editing to display changes in the text field 
+			newMapShape.getTextField().getDocument().addDocumentListener(new DocumentListener() {
+				@Override
+				public void insertUpdate(DocumentEvent e) {
+					canvasPanel.repaint();
+				}
+				@Override
+				public void removeUpdate(DocumentEvent e) {
+					canvasPanel.repaint();
+				}
+				@Override
+				public void changedUpdate(DocumentEvent e) {
+				}
+			});
+			
+			shapes.add(newMapShape);
+			
+			setSelectedShape(null);
+			setSelectedShape(newMapShape);		// Select the newly added shape
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
-		// Select the newly added shape
-		setSelectedShape(null);
-		setSelectedShape(shapes.get(shapes.size() - 1));
 		
 		canvasPanel.repaint();
 	}
@@ -158,6 +182,7 @@ public class ShapesController {
 		return selectedShape;
 	}
 	public void setSelectedShape(MapShape selectedShape) {
+		prevSelectedShape = this.selectedShape;
 		this.selectedShape = selectedShape;
 		if (prevSelectedShape != null) prevSelectedShape.isHighlighted = false;
 		if (selectedShape != null) selectedShape.isHighlighted = true;
@@ -165,6 +190,12 @@ public class ShapesController {
 			for (MapShape shape : shapes) shape.isHighlighted = false;
 			shapeSelectionIndex = 0;
 		}
+	}
+	public MapShape getEditingShape() {
+		return editingShape;
+	}
+	public void setEditingShape(MapShape editingShape) {
+		this.editingShape = editingShape;
 	}
 	public List<MapLine> getConnections() {
 		return connections;
@@ -180,7 +211,7 @@ public class ShapesController {
 		this.shapes = shapes;
 	}
 	public void replaceShapesFromJson(JsonArray shapesData) {
-		shapes = new ArrayList<MapShape>();
+		reset();
 		for (JsonElement shape : shapesData) {
 			JsonObject thisShape = shape.getAsJsonObject();
 			try {
@@ -192,6 +223,7 @@ public class ShapesController {
 										thisShape.get("Width").getAsInt(), thisShape.get("Height").getAsInt()};
 				MapShape newMapShape = (MapShape)newMapShapeCons.newInstance(newMapShapeParameters);
 				
+				newMapShape.setBorderWidth(thisShape.get("Border width").getAsInt());
 				newMapShape.setBorderColour(Color.decode(thisShape.get("Border colour").getAsString()));
 				newMapShape.getTextField().setText(thisShape.get("Text").getAsString());
 				newMapShape.getTextField().setFont(new Font(thisShape.get("Text font name").getAsString(), 
@@ -199,6 +231,21 @@ public class ShapesController {
 													thisShape.get("Text font size").getAsInt()));
 				newMapShape.getTextField().setForeground(Color.decode(thisShape.get("Font colour").getAsString()));
 				
+				// Continously repaint panel when editing to display changes in the text field 
+				newMapShape.getTextField().getDocument().addDocumentListener(new DocumentListener() {
+					@Override
+					public void insertUpdate(DocumentEvent e) {
+						canvasPanel.repaint();
+					}
+					@Override
+					public void removeUpdate(DocumentEvent e) {
+						canvasPanel.repaint();
+					}
+					@Override
+					public void changedUpdate(DocumentEvent e) {
+					}
+				});
+
 				shapes.add(newMapShape);
 			} catch (Exception e) {
 				e.printStackTrace();

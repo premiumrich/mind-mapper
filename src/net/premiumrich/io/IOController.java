@@ -17,10 +17,10 @@ import net.premiumrich.ui.CanvasPanel;
  */
 public class IOController {
 	
+	private File currentFile;
+	
 	private AppFrame appFrame;
 	private CanvasPanel canvasPanel;
-	
-	private File currentFile;
 	
 	public IOController(AppFrame appFrame, CanvasPanel canvasPanel) {
 		this.appFrame = appFrame;
@@ -43,10 +43,10 @@ public class IOController {
 		setCurrentFile(file);
 	}
 	
-	public void handleExport(File file, String imgType) {
+	public void handleExport(File file, String imgType, int scale) {
 		System.out.print("Exporting to " + file.getAbsolutePath() + " ... ");
-		// Upscale exported image 4x to increase quality and enable transparency if exporting to PNG
-		BufferedImage image = new BufferedImage(canvasPanel.getWidth() * 4, canvasPanel.getHeight() * 4, 
+		// Upscale exported image to increase quality and enable transparency if exporting to PNG
+		BufferedImage image = new BufferedImage(canvasPanel.getWidth() * scale, canvasPanel.getHeight() * scale, 
 												imgType == "png" ? BufferedImage.TYPE_INT_ARGB : BufferedImage.TYPE_INT_RGB);
 		Graphics2D g2d = image.createGraphics();
 		// Increase quality of exported image
@@ -58,11 +58,11 @@ public class IOController {
 		g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
 		g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
 		g2d.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
-		g2d.scale(4, 4);		// Upscale 4x
+		g2d.scale(scale, scale);		// Upscale
 		canvasPanel.printAll(g2d);
 		try {
 		    ImageIO.write(image, imgType, file);
-		    System.out.println("Success!");
+		    System.out.println("Success");
 		} catch (IOException e) {
 		    e.printStackTrace();
 		}

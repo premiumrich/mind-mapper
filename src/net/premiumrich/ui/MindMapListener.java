@@ -33,27 +33,26 @@ public class MindMapListener implements MouseListener, MouseMotionListener, Mous
 		viewport.panStartPoint = evt.getLocationOnScreen();
 		triggerContext(evt);
 		if (!canvasPanel.getContextMenu().isVisible()) canvasPanel.isContextTrigger = false;
-		viewport.released = false;
+		viewport.setMouseReleased(false);
 		
 		// Select the shape that is clicked on
 		if (shapeCon.getShapesUnderCursor(evt.getPoint()).size() > 0) {
 			shapeCon.dragStartPoint = evt.getLocationOnScreen();			// Update drag diff reference
 			if (shapeCon.shapeSelectionIndex > shapeCon.getShapesUnderCursor(evt.getPoint()).size() - 1)
 				shapeCon.shapeSelectionIndex = 0;		// Prevent index overflow by restarting cycle
-			shapeCon.prevSelectedShape = shapeCon.selectedShape;
-			if (shapeCon.prevSelectedShape != null) shapeCon.prevSelectedShape.isHighlighted = false;
 			shapeCon.setSelectedShape(shapeCon.getShapesUnderCursor(evt.getPoint()).get(shapeCon.shapeSelectionIndex));
 			shapeCon.shapeSelectionIndex++;				// Increment index to select overlapped shapes
 		} else {	// Remove the selection
 			for (Component con : canvasPanel.getComponents()) {
 				if (con instanceof JTextField) canvasPanel.remove(con);		// Remove all text fields
 			}
+			shapeCon.setEditingShape(null);
 			shapeCon.setSelectedShape(null);
 		}
 	}
 	public void mouseReleased(MouseEvent evt) {
 		triggerContext(evt);
-		viewport.released = true;
+		viewport.setMouseReleased(true);
 		canvasPanel.repaint();		// Bypass FPS limiter and force repaint to lock in position
 	}
 	public void mouseDragged(MouseEvent e) {
@@ -62,9 +61,9 @@ public class MindMapListener implements MouseListener, MouseMotionListener, Mous
 		} else {															// Drag the selected shape
 			Point curPoint = e.getLocationOnScreen();
 			if (curPoint.x  != shapeCon.dragStartPoint.x || curPoint.y != shapeCon.dragStartPoint.y) {
-				shapeCon.selectedShape.setNewCoordinates(
-						shapeCon.selectedShape.getX() + (int)((curPoint.x - shapeCon.dragStartPoint.x)/viewport.zoomFactor), 
-						shapeCon.selectedShape.getY() + (int)((curPoint.y - shapeCon.dragStartPoint.y)/viewport.zoomFactor));
+				shapeCon.getSelectedShape().setNewCoordinates(
+						shapeCon.getSelectedShape().getX() + (int)((curPoint.x - shapeCon.dragStartPoint.x)/viewport.zoomFactor), 
+						shapeCon.getSelectedShape().getY() + (int)((curPoint.y - shapeCon.dragStartPoint.y)/viewport.zoomFactor));
 				shapeCon.dragStartPoint = e.getLocationOnScreen();			// Update drag diff reference
 			}
 			viewport.handleRepaint();
@@ -77,14 +76,13 @@ public class MindMapListener implements MouseListener, MouseMotionListener, Mous
 			} else if (evt.getWheelRotation() > 0) {		// Mouse wheel rolls backwards
 				viewport.zoomOut();
 			}
-			viewport.zooming = true;
-			viewport.handleRepaint();
 		}
 	}
 	public void mouseClicked(MouseEvent evt) {
 		// Handle double-click
 		if (evt.getClickCount() == 2 && shapeCon.getSelectedShape() != null) {
 			canvasPanel.add(shapeCon.getSelectedShape().getTextField());
+			shapeCon.setEditingShape(shapeCon.getSelectedShape());
 			shapeCon.getSelectedShape().getTextField().requestFocusInWindow();
 			shapeCon.getSelectedShape().getTextField().selectAll();
 		}

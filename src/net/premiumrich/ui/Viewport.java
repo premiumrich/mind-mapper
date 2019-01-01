@@ -24,21 +24,21 @@ import net.premiumrich.shapes.MapShape;
  */
 public class Viewport {
 
-	private CanvasPanel canvasPanel;
-
 	private static final int MAX_FPS = 60;
 	private long lastFrameTime = 0;
 	// Zoom and pan variables
-	protected boolean zooming;
+	private boolean zooming;
 	public double zoomFactor = 1, prevZoomFactor = 1;
-	protected boolean released;
-	public boolean panning;
+	private boolean released;
+	private boolean panning;
 	public int xOffset = 0, yOffset = 0;
 	protected Point panStartPoint;
 	protected int panXDiff, panYDiff;
 	
 	private Timer fpsCounterUpdater;
 	private Timer debugLabelsUpdater;
+	
+	private CanvasPanel canvasPanel;
 	
 	public Viewport(CanvasPanel canvasPanel) {
 		this.canvasPanel = canvasPanel;
@@ -95,15 +95,21 @@ public class Viewport {
 	}
 
 	private void drawShapeText(Graphics g, MapShape mapShape) {
-		// Offset the location of text fields
-		mapShape.getTextField().setBounds(mapShape.getX() + mapShape.getShape().getBounds().width/2 - 100 + xOffset, 
-											mapShape.getY() + mapShape.getShape().getBounds().height/2 - 50 + yOffset,
-											200, 100);
-		Graphics2D textGraphics = (Graphics2D) g.create(mapShape.getTextField().getBounds().x - xOffset, 
-											mapShape.getTextField().getBounds().y - yOffset, 
-											mapShape.getTextField().getBounds().width, 
-											mapShape.getTextField().getBounds().height);
-		mapShape.getTextField().paint(textGraphics);
+		if (! mapShape.equals(canvasPanel.getShapesController().getEditingShape())) {
+			// Offset the location of text fields
+			mapShape.getTextField().setBounds(mapShape.getX() + mapShape.getShape().getBounds().width/2 - 100 + xOffset, 
+												mapShape.getY() + mapShape.getShape().getBounds().height/2 - 50 + yOffset,
+												200, 100);
+			Graphics2D textGraphics = (Graphics2D) g.create(mapShape.getTextField().getBounds().x - xOffset, 
+												mapShape.getTextField().getBounds().y - yOffset, 
+												mapShape.getTextField().getBounds().width, 
+												mapShape.getTextField().getBounds().height);
+			mapShape.getTextField().paint(textGraphics);
+		} else {
+			mapShape.getTextField().setBounds(mapShape.getX() + mapShape.getShape().getBounds().width/2 - 100, 
+												mapShape.getY() + mapShape.getShape().getBounds().height/2 - 50,
+												200, 100);
+		}
 	}
 	
 	protected void handleRepaint() {		// A handler to limit framerate and CPU usage
@@ -122,18 +128,27 @@ public class Viewport {
 		handleRepaint();
 	}
 	public void zoomIn() {
+		zooming = true;
 		zoomFactor *= 1.1;
+		handleRepaint();
 	}
 	public void zoomOut() {
+		zooming = true;
 		zoomFactor /= 1.1;
+		handleRepaint();
 	}
 	public void centerView() {
-		xOffset = 0;
-		yOffset = 0;
+		panning = true;
+		xOffset = 0; yOffset = 0;
+		canvasPanel.repaint();
 	}
-	public void resetZoom() {
-		zoomFactor = 0;
-		prevZoomFactor = 0;
+	public void reset() {
+		xOffset = 0; yOffset = 0;
+		zoomFactor = 1.0; prevZoomFactor = 1.0;
+		panning = true;
+		released = true;
+		zooming = true;
+		canvasPanel.repaint();
 	}
 	
 	private void initTimers() {
@@ -159,6 +174,9 @@ public class Viewport {
 	
 	
 	// Getters and setters
+	public void setMouseReleased(boolean state) {
+		released = state;
+	}
 	public JsonObject getViewportData() {
 		JsonObject viewportData = new JsonObject();
 		viewportData.addProperty("Zoom", zoomFactor);
@@ -167,6 +185,7 @@ public class Viewport {
 		return viewportData;
 	}
 	public void setViewportData(JsonObject viewportData) {
+		reset();
 		zoomFactor = viewportData.get("Zoom").getAsDouble();
 		prevZoomFactor = canvasPanel.getViewport().zoomFactor;
 		xOffset = viewportData.get("xOffset").getAsInt();

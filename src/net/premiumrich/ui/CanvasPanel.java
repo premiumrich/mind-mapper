@@ -20,31 +20,23 @@ public class CanvasPanel extends JPanel {
 	public MouseEvent contextTriggerEvent;
 	
 	private Viewport viewport;
-	private ShapesController shapeCon;
+	private ShapesController shapesCon;
 	
 	public CanvasPanel() {
-		viewport = new Viewport(this);
-		shapeCon = new ShapesController(this, viewport);
 		contextMenu = new ContextMenu(this);
-
-		this.setBackground(Color.white);
-		
-		MindMapListener mapListener = new MindMapListener(this, viewport);
-		this.addMouseListener(mapListener);
-		this.addMouseMotionListener(mapListener);
-		this.addMouseWheelListener(mapListener);
+		reset();
 	}
 	
 	@Override
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
-		viewport.drawAll(g);		// Invoke drawing
+		viewport.drawAll(g);		// Draw all shapes, text, and lines
 	}
 	
 	// Handle displaying context menu
 	public void popup(MouseEvent e) {
-		if (shapeCon.getShapesUnderCursor(e.getPoint()).size() > 0) {
-			contextMenu.updateEditMenuValues(shapeCon.selectedShape);
+		if (shapesCon.getShapesUnderCursor(e.getPoint()).size() > 0) {
+			contextMenu.updateEditMenuValues(shapesCon.getSelectedShape());
 			contextMenu.getEditMenu().setEnabled(true);
 		}
 		else
@@ -52,13 +44,23 @@ public class CanvasPanel extends JPanel {
 		contextMenu.show(e.getComponent(), e.getX(), e.getY());
 	}
 	
+	public void reset() {
+		viewport = new Viewport(this);
+		shapesCon = new ShapesController(this, viewport);
+		MindMapListener mapListener = new MindMapListener(this, viewport);
+		this.addMouseListener(mapListener);
+		this.addMouseMotionListener(mapListener);
+		this.addMouseWheelListener(mapListener);
+		this.setBackground(Color.white);
+		repaint();
+	}
 	
 	// Getters
 	public Viewport getViewport() {
 		return viewport;
 	}
 	public ShapesController getShapesController() {
-		return shapeCon;
+		return shapesCon;
 	}
 	public ContextMenu getContextMenu() {
 		return contextMenu;

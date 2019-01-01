@@ -27,8 +27,6 @@ public class ContextMenu extends JPopupMenu {
 
 	private static final long serialVersionUID = 0;
 	
-	private CanvasPanel canvasPanel;
-	
 	private JMenu addMenu;
 	private JMenuItem addEllipseMenuItem;
 	private JMenuItem addRectangleMenuItem;
@@ -71,6 +69,7 @@ public class ContextMenu extends JPopupMenu {
 		fontStyles.put("Italic", Font.ITALIC);
 	}
 	
+	private CanvasPanel canvasPanel;
 	
 	public ContextMenu(CanvasPanel canvasPanel) {
 		this.canvasPanel = canvasPanel;
@@ -84,7 +83,6 @@ public class ContextMenu extends JPopupMenu {
 		
 		addEllipseMenuItem = new JMenuItem("Ellipse shape");
 		addEllipseMenuItem.addActionListener(new ActionListener() {
-			@Override
 			public void actionPerformed(ActionEvent e) {
 				canvasPanel.getShapesController().addShape("net.premiumrich.shapes.EllipseShape");
 			}
@@ -94,7 +92,6 @@ public class ContextMenu extends JPopupMenu {
 		addRectangleMenuItem = new JMenuItem("Rectangle shape");
 		addRectangleMenuItem.setActionCommand("Rectangle");
 		addRectangleMenuItem.addActionListener(new ActionListener() {
-			@Override
 			public void actionPerformed(ActionEvent e) {
 				canvasPanel.getShapesController().addShape("net.premiumrich.shapes.RectangleShape");
 			}
@@ -139,7 +136,6 @@ public class ContextMenu extends JPopupMenu {
 		for (String colourName : colours.keySet()) {
 			JMenuItem selectBorderColour = new JMenuItem(colourName);
 			selectBorderColour.addActionListener(new ActionListener() {
-				@Override
 				public void actionPerformed(ActionEvent e) {
 					canvasPanel.getShapesController().changeBorderColour(colours.get(colourName));
 					canvasPanel.getShapesController().setSelectedShape(null);
@@ -156,7 +152,6 @@ public class ContextMenu extends JPopupMenu {
 		for (String fontName : fonts.keySet()) {
 			JMenuItem selectFont = new JMenuItem(fontName);
 			selectFont.addActionListener(new ActionListener() {
-				@Override
 				public void actionPerformed(ActionEvent e) {
 					canvasPanel.getShapesController().changeFont(fontName);
 					canvasPanel.getShapesController().setSelectedShape(null);
@@ -167,11 +162,10 @@ public class ContextMenu extends JPopupMenu {
 		
 		changeFontStyleMenu = new JMenu("Text font style");
 		editMenu.add(changeFontStyleMenu);
-		// Iterate through available font styles and create a new radio button for each
+		// Iterate through available font styles and create a new menu item for each
 		for (String fontStyle : fontStyles.keySet()) {
 			JMenuItem selectFontStyle = new JMenuItem(fontStyle);
 			selectFontStyle.addActionListener(new ActionListener() {
-				@Override
 				public void actionPerformed(ActionEvent e) {
 					canvasPanel.getShapesController().changeFontStyle(fontStyles.get(fontStyle));
 					canvasPanel.getShapesController().setSelectedShape(null);
@@ -186,15 +180,12 @@ public class ContextMenu extends JPopupMenu {
 		changeFontSizeField = new JTextField();
 		changeFontSizeField.setColumns(3);
 		changeFontSizeField.getDocument().addDocumentListener(new DocumentListener() {
-			@Override
 			public void insertUpdate(DocumentEvent e) {
 				changeFontSize();
 			}
-			@Override
 			public void removeUpdate(DocumentEvent e) {
 				changeFontSize();
 			}
-			@Override
 			public void changedUpdate(DocumentEvent e) {
 			}
 			private void changeFontSize() {
@@ -213,7 +204,6 @@ public class ContextMenu extends JPopupMenu {
 		for (String colourName : colours.keySet()) {
 			JMenuItem selectFontColour = new JMenuItem(colourName);
 			selectFontColour.addActionListener(new ActionListener() {
-				@Override
 				public void actionPerformed(ActionEvent e) {
 					canvasPanel.getShapesController().changeFontColour(colours.get(colourName));
 					canvasPanel.getShapesController().setSelectedShape(null);
@@ -224,9 +214,11 @@ public class ContextMenu extends JPopupMenu {
 	}
 	
 	public void updateEditMenuValues(MapShape selectedShape) {
-		// Update border width and font size values for the selected shape
-		changeBorderWidthSlider.setValue(selectedShape.getBorderWidth());
-		changeFontSizeField.setText(Integer.toString(selectedShape.getTextField().getFont().getSize()));
+		if (selectedShape != null) {
+			// Update border width and font size values for the selected shape
+			changeBorderWidthSlider.setValue(selectedShape.getBorderWidth());
+			changeFontSizeField.setText(Integer.toString(selectedShape.getTextField().getFont().getSize()));
+		}
 	}
 	
 	public JMenu getAddMenu() {

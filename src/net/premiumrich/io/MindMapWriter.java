@@ -25,7 +25,7 @@ public class MindMapWriter {
 			PrintWriter p = new PrintWriter(new FileWriter(outFile));
 			p.write(gson.toJson(output));
 			p.close();
-			System.out.println("Success!");
+			System.out.println("Success");
 		} catch (IOException e) {
 			System.out.println("File not found! " + e);
 		}
