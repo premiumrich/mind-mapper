@@ -1,5 +1,6 @@
 package net.premiumrich.shapes;
 
+import java.awt.Point;
 import java.awt.geom.Line2D;
 
 public class MapLine {
@@ -16,11 +17,22 @@ public class MapLine {
 	}
 	
 	public void updateConnection() {
-		// This only creates a line between the upper left corner of the two shapes
-		line = new Line2D.Double(origin.getShape().getBounds().getLocation(), 
-								termination.getShape().getBounds().getLocation());
+		// Line exists between the center of the origin and the termination
+		Point originP = origin.getShape().getBounds().getLocation();
+		originP.translate(origin.getShape().getBounds().width/2, origin.getShape().getBounds().height/2);
+		Point terminationP = termination.getShape().getBounds().getLocation();
+		terminationP.translate(termination.getShape().getBounds().width/2, termination.getShape().getBounds().height/2);
+		
+		line = new Line2D.Double(originP, terminationP);
 	}
 	
+	// Getters
+	public MapShape getOrigin() {
+		return origin;
+	}
+	public MapShape getTermination() {
+		return termination;
+	}
 	public Line2D getLine() {
 		return line;
 	}

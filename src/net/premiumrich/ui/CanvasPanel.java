@@ -36,11 +36,13 @@ public class CanvasPanel extends JPanel {
 	// Handle displaying context menu
 	public void popup(MouseEvent e) {
 		if (shapesCon.getShapesUnderCursor(e.getPoint()).size() > 0) {
-			contextMenu.updateEditMenuValues(shapesCon.getSelectedShape());
+			contextMenu.updateMenuValues(shapesCon.getSelectedShape());
 			contextMenu.getEditMenu().setEnabled(true);
-		}
-		else
+			contextMenu.getConnectionsMenu().setEnabled(true);
+		} else {
 			contextMenu.getEditMenu().setEnabled(false);
+			contextMenu.getConnectionsMenu().setEnabled(false);
+		}
 		contextMenu.show(e.getComponent(), e.getX(), e.getY());
 	}
 	

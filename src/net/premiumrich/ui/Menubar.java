@@ -69,6 +69,7 @@ public class Menubar extends JMenuBar {
 		this.add(fileMenu);
 		
 		newItem = new JMenuItem("New");
+		newItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, KeyEvent.CTRL_DOWN_MASK));
 		newItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
 				appFrame.getCanvasPanel().reset();
@@ -77,6 +78,7 @@ public class Menubar extends JMenuBar {
 		fileMenu.add(newItem);
 		
 		openItem = new JMenuItem("Open ...");
+		openItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.CTRL_DOWN_MASK));
 		openItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
 				fileChooser.setDialogTitle("Open Mind Map");
@@ -95,6 +97,7 @@ public class Menubar extends JMenuBar {
 		fileMenu.add(openItem);
 		
 		saveItem = new JMenuItem("Save");
+		saveItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK));
 		saveItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (appFrame.getIOCon().getCurrentFile() != null) {
@@ -106,6 +109,7 @@ public class Menubar extends JMenuBar {
 		fileMenu.add(saveItem);
 		
 		saveAsItem = new JMenuItem("Save As ...");
+		saveAsItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK));
 		saveAsItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
 				fileChooser.setDialogTitle("Save Mind Map");
@@ -167,6 +171,7 @@ public class Menubar extends JMenuBar {
 		fileMenu.addSeparator();
 		
 		exitItem = new JMenuItem("Exit");
+		exitItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, KeyEvent.CTRL_DOWN_MASK));
 		exitItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
 				System.exit(0);
@@ -211,7 +216,7 @@ public class Menubar extends JMenuBar {
 		viewMenu.add(togglePickerPanelItem);
 		
 		zoomInItem = new JMenuItem("Zoom In");
-		zoomInItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_EQUALS, KeyEvent.CTRL_MASK | KeyEvent.SHIFT_DOWN_MASK));
+		zoomInItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_EQUALS, KeyEvent.CTRL_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK));
 		zoomInItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
 				appFrame.getCanvasPanel().getViewport().zoomIn();
@@ -220,7 +225,7 @@ public class Menubar extends JMenuBar {
 		viewMenu.add(zoomInItem);
 		
 		zoomOutItem = new JMenuItem("Zoom Out");
-		zoomOutItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_MINUS, KeyEvent.CTRL_MASK));
+		zoomOutItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_MINUS, KeyEvent.CTRL_DOWN_MASK));
 		zoomOutItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
 				appFrame.getCanvasPanel().getViewport().zoomOut();

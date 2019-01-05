@@ -79,18 +79,20 @@ public class Viewport {
         		panYDiff = 0;
             }
         }
-		
+
+		for (MapLine connection : canvasPanel.getShapesController().getConnections()) {
+			connection.updateConnection();
+			g2d.setColor(Color.black);
+			g2d.draw(connection.getLine());
+		}
 		// Iterate and print all shapes and lines
 		for (MapShape mapShape : canvasPanel.getShapesController().getShapes()) {
 			if (mapShape.isHighlighted) g2d.setColor(Color.cyan);
 			else g2d.setColor(mapShape.getBorderColour());
 			g2d.setStroke(new BasicStroke(mapShape.getBorderWidth()));
 			g2d.draw(mapShape.getShape());
+			
 			drawShapeText(g, mapShape);
-		}
-		for (MapLine connection : canvasPanel.getShapesController().getConnections()) {
-			connection.updateConnection();
-			g2d.draw(connection.getLine());
 		}
 	}
 

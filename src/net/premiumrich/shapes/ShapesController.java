@@ -33,8 +33,7 @@ public class ShapesController {
 	
 	public boolean isConnecting;
 	private List<MapLine> connections;
-	public MapShape connectionOrigin;
-	public MapShape connectionDestination;
+	private MapShape origin;
 
 	private CanvasPanel canvasPanel;
 	private Viewport viewport;
@@ -156,8 +155,26 @@ public class ShapesController {
 		canvasPanel.repaint();
 	}
 	
-	public void newConnection(MapShape origin, MapShape termination) {
-		connections.add(new MapLine(origin, termination));
+	public void setSelectedShapeAsOrigin() {
+		origin = selectedShape;
+	}
+	
+	public void setSelectedShapeAsTermination() {
+		connections.add(new MapLine(origin, selectedShape));
+		canvasPanel.repaint();
+		origin = null;
+	}
+	
+	public void removeConnectionsFromSelectedShape() {
+		origin = null;
+		List<MapLine> toBeRemoved = new ArrayList<MapLine>();
+		for (MapLine connection : connections) {
+			if (connection.getOrigin() == selectedShape || connection.getTermination() == selectedShape) {
+				toBeRemoved.add(connection);
+			}
+		}
+		connections.removeAll(toBeRemoved);
+		canvasPanel.repaint();
 	}
 	
 	
@@ -199,6 +216,9 @@ public class ShapesController {
 	}
 	public List<MapLine> getConnections() {
 		return connections;
+	}
+	public MapShape getConnectionOrigin() {
+		return origin;
 	}
 	public JsonArray getShapesAsJson() {
 		JsonArray shapesData = new JsonArray();
