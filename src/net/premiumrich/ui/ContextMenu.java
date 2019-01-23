@@ -29,11 +29,11 @@ public class ContextMenu extends JPopupMenu {
 	private static final long serialVersionUID = 0;
 	
 	private JMenu addMenu;
-	private JMenuItem addEllipseMenuItem;
-	private JMenuItem addRectangleMenuItem;
+	private JMenuItem addEllipse;
+	private JMenuItem addRectangle;
 	
 	private JMenu editMenu;
-	private JMenuItem removeElementMenuItem;
+	private JMenuItem removeElement;
 	
 	private JMenu changeBorderWidthMenu;
 	private JSlider changeBorderWidthSlider;
@@ -69,6 +69,12 @@ public class ContextMenu extends JPopupMenu {
 		fontStyles.put("Bold", Font.BOLD);
 		fontStyles.put("Italic", Font.ITALIC);
 	}
+
+	private JMenu orderMenu;
+	private JMenuItem bringToFront;
+	private JMenuItem bringForward;
+	private JMenuItem sendToBack;
+	private JMenuItem sendBackward;
 	
 	private JMenu connectionsMenu;
 	private JMenuItem removeAllConnections;
@@ -80,6 +86,7 @@ public class ContextMenu extends JPopupMenu {
 		this.canvasPanel = canvasPanel;
 		initAddMenu();
 		initEditMenu();
+		initOrderMenu();
 		initConnectionsMenu();
 	}
 	
@@ -87,32 +94,31 @@ public class ContextMenu extends JPopupMenu {
 		addMenu = new JMenu("Add ...");
 		this.add(addMenu);
 		
-		addEllipseMenuItem = new JMenuItem("Ellipse shape");
-		addEllipseMenuItem.addActionListener(new ActionListener() {
+		addEllipse = new JMenuItem("Ellipse shape");
+		addEllipse.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				canvasPanel.getShapesController().addShape("net.premiumrich.shapes.EllipseShape");
 			}
 		});
-		addMenu.add(addEllipseMenuItem);
+		addMenu.add(addEllipse);
 		
-		addRectangleMenuItem = new JMenuItem("Rectangle shape");
-		addRectangleMenuItem.setActionCommand("Rectangle");
-		addRectangleMenuItem.addActionListener(new ActionListener() {
+		addRectangle = new JMenuItem("Rectangle shape");
+		addRectangle.setActionCommand("Rectangle");
+		addRectangle.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				canvasPanel.getShapesController().addShape("net.premiumrich.shapes.RectangleShape");
 			}
 		});
-		addMenu.add(addRectangleMenuItem);
+		addMenu.add(addRectangle);
 	}
 	
 	private void initEditMenu() {
 		editMenu = new JMenu("Edit");
 		this.add(editMenu);
 		
-		removeElementMenuItem = new JMenuItem("Remove this");
-		editMenu.add(removeElementMenuItem);
-		removeElementMenuItem.addActionListener(new ActionListener() {
-			@Override
+		removeElement = new JMenuItem("Remove this");
+		editMenu.add(removeElement);
+		removeElement.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				canvasPanel.getShapesController().removeSelectedShape();
 			}
@@ -219,7 +225,44 @@ public class ContextMenu extends JPopupMenu {
 		}
 	}
 	
-	public void initConnectionsMenu() {
+	private void initOrderMenu() {
+		orderMenu = new JMenu("Order");
+		this.add(orderMenu);
+
+		bringToFront = new JMenuItem("Bring to Front");
+		bringToFront.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				canvasPanel.getShapesController().bringSelectedShapeToFront();
+			}
+		});
+		orderMenu.add(bringToFront);
+		
+		bringForward = new JMenuItem("Bring Forward");
+		bringForward.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				canvasPanel.getShapesController().bringSelectedShapeForwards();
+			}
+		});
+		orderMenu.add(bringForward);
+		
+		sendToBack = new JMenuItem("Send to Back");
+		sendToBack.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				canvasPanel.getShapesController().sendSelectedShapeToBack();
+			}
+		});
+		orderMenu.add(sendToBack);
+		
+		sendBackward = new JMenuItem("Send Backward");
+		sendBackward.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				canvasPanel.getShapesController().sendSelectedShapeBackward();
+			}
+		});
+		orderMenu.add(sendBackward);
+	}
+
+	private void initConnectionsMenu() {
 		connectionsMenu = new JMenu("Manage connections");
 		this.add(connectionsMenu);
 		
@@ -250,16 +293,23 @@ public class ContextMenu extends JPopupMenu {
 			changeBorderWidthSlider.setValue(selectedShape.getBorderWidth());
 			changeFontSizeField.setText(Integer.toString(selectedShape.getTextField().getFont().getSize()));
 			
+			// Hide "Remove all connections" button if there are no connections
+			boolean hasConnections = false;
 			for (MapLine connection : canvasPanel.getShapesController().getConnections()) {
 				if (connection.getOrigin() == selectedShape || connection.getTermination() == selectedShape) {
-					setShapeInConnection.setEnabled(false);
-					setShapeInConnection.setForeground(Color.red);
-					setShapeInConnection.setText("Cannot set selected shape again");
+					hasConnections = true;
 					break;
 				}
 			}
+			removeAllConnections.setEnabled(hasConnections ? true : false);
 			
-			if (canvasPanel.getShapesController().getConnectionOrigin() != null) {
+			if (canvasPanel.getShapesController().getConnectionOrigin() == null) {
+				// Allow selecting as origin
+				setShapeInConnection.setEnabled(true);
+				setShapeInConnection.setForeground(Color.black);
+				setShapeInConnection.setText("Set as origin");
+			} else {
+				// Allow selecting as termination
 				if (canvasPanel.getShapesController().getSelectedShape().equals(
 							canvasPanel.getShapesController().getConnectionOrigin())) {
 					setShapeInConnection.setEnabled(false);
@@ -270,10 +320,6 @@ public class ContextMenu extends JPopupMenu {
 					setShapeInConnection.setForeground(Color.black);
 					setShapeInConnection.setText("Set as termination");
 				}
-			} else {
-				setShapeInConnection.setEnabled(true);
-				setShapeInConnection.setForeground(Color.black);
-				setShapeInConnection.setText("Set as origin");
 			}
 		}
 	}
@@ -283,6 +329,9 @@ public class ContextMenu extends JPopupMenu {
 	}
 	public JMenu getEditMenu() {
 		return editMenu;
+	}
+	public JMenu getOrderMenu() {
+		return orderMenu;
 	}
 	public JMenu getConnectionsMenu() {
 		return connectionsMenu;

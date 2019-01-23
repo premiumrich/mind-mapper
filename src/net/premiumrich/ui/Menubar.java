@@ -245,6 +245,13 @@ public class Menubar extends JMenuBar {
 		viewMenu.add(zoomResetItem);
 		
 //		centerCanvasItem
+		centerCanvasItem = new JMenuItem("Center Canvas");
+		centerCanvasItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent evt) {
+				appFrame.getCanvasPanel().getViewport().centerView();
+			}
+		});
+		viewMenu.add(centerCanvasItem);
 	}
 	
 	private void initWindowMenu() {

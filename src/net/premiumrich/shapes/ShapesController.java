@@ -5,6 +5,7 @@ import java.awt.Font;
 import java.awt.Point;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.swing.event.DocumentEvent;
@@ -155,6 +156,32 @@ public class ShapesController {
 		canvasPanel.repaint();
 	}
 	
+	public void bringSelectedShapeToFront() {
+		Collections.swap(shapes, shapes.indexOf(selectedShape), shapes.size()-1);
+		canvasPanel.repaint();
+	}
+
+	public void bringSelectedShapeForwards() {
+		// Do nothing if selected shape is already at the front
+		if (! (shapes.indexOf(selectedShape) == shapes.size()-1)) {
+			Collections.swap(shapes, shapes.indexOf(selectedShape), shapes.indexOf(selectedShape)+1);
+			canvasPanel.repaint();
+		}
+	}
+
+	public void sendSelectedShapeToBack() {
+		Collections.swap(shapes, shapes.indexOf(selectedShape), 0);
+		canvasPanel.repaint();
+	}
+
+	public void sendSelectedShapeBackward() {
+		// Do nothing if selected shape is already at the back
+		if (! (shapes.indexOf(selectedShape) == 0)) {
+			Collections.swap(shapes, shapes.indexOf(selectedShape), shapes.indexOf(selectedShape)-1);
+			canvasPanel.repaint();
+		}
+	}
+
 	public void setSelectedShapeAsOrigin() {
 		origin = selectedShape;
 	}

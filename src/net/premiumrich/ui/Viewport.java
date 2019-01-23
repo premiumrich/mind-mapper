@@ -80,25 +80,33 @@ public class Viewport {
             }
         }
 
+		// Iterate and print all lines before shapes
 		for (MapLine connection : canvasPanel.getShapesController().getConnections()) {
 			connection.updateConnection();
 			g2d.setColor(Color.black);
+			g2d.setStroke(new BasicStroke(2));
 			g2d.draw(connection.getLine());
 		}
-		// Iterate and print all shapes and lines
 		for (MapShape mapShape : canvasPanel.getShapesController().getShapes()) {
+			// Fill shape background with white to hide lines within the shape
+			g2d.setColor(Color.white);
+			g2d.fill(mapShape.getShape());
+			// Draw border around shape
 			if (mapShape.isHighlighted) g2d.setColor(Color.cyan);
 			else g2d.setColor(mapShape.getBorderColour());
 			g2d.setStroke(new BasicStroke(mapShape.getBorderWidth()));
 			g2d.draw(mapShape.getShape());
-			
+			// Draw text
 			drawShapeText(g, mapShape);
 		}
 	}
 
 	private void drawShapeText(Graphics g, MapShape mapShape) {
+		/**
+		 * Draw text from textfield only, if not being edited, or position the textfield correctly if being edited
+		 */
 		if (! mapShape.equals(canvasPanel.getShapesController().getEditingShape())) {
-			// Offset the location of text fields
+			// Offset the location of text fields to center of shape
 			mapShape.getTextField().setBounds(mapShape.getX() + mapShape.getShape().getBounds().width/2 - 100 + xOffset, 
 												mapShape.getY() + mapShape.getShape().getBounds().height/2 - 50 + yOffset,
 												200, 100);
@@ -140,8 +148,17 @@ public class Viewport {
 		handleRepaint();
 	}
 	public void centerView() {
+		// Calculate average center
+		int numShapes = canvasPanel.getShapesController().getShapes().size();
+		int totalX = 0, totalY = 0;
+		for (MapShape shape : canvasPanel.getShapesController().getShapes()) {
+			totalX += shape.getX() + shape.getShape().getBounds().getWidth()/2;
+			totalY += shape.getY() + shape.getShape().getBounds().getHeight()/2;
+		}
+		xOffset = -(totalX/numShapes - canvasPanel.getWidth()/2);
+		yOffset = -(totalY/numShapes - canvasPanel.getHeight()/2);
+		
 		panning = true;
-		xOffset = 0; yOffset = 0;
 		canvasPanel.repaint();
 	}
 	public void reset() {

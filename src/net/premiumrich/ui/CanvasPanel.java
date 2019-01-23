@@ -38,9 +38,11 @@ public class CanvasPanel extends JPanel {
 		if (shapesCon.getShapesUnderCursor(e.getPoint()).size() > 0) {
 			contextMenu.updateMenuValues(shapesCon.getSelectedShape());
 			contextMenu.getEditMenu().setEnabled(true);
+			contextMenu.getOrderMenu().setEnabled(true);
 			contextMenu.getConnectionsMenu().setEnabled(true);
 		} else {
 			contextMenu.getEditMenu().setEnabled(false);
+			contextMenu.getOrderMenu().setEnabled(false);
 			contextMenu.getConnectionsMenu().setEnabled(false);
 		}
 		contextMenu.show(e.getComponent(), e.getX(), e.getY());

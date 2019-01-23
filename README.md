@@ -5,5 +5,5 @@ IB May 2019 Computer Science HL Internal Assessment
 *TBA*
 
 ## Disclaimer
-*Although I chose to license this program under MIT, it does not grant permission for plagarism!*
+*Although I chose to license this program under MIT, it does not grant permission for plagiarism!*
 *Please use this code as inspiration for implementation only.*
