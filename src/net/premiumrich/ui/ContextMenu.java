@@ -31,6 +31,7 @@ public class ContextMenu extends JPopupMenu {
 	private JMenu addMenu;
 	private JMenuItem addEllipse;
 	private JMenuItem addRectangle;
+	private JMenuItem addTriangle;
 	
 	private JMenu editMenu;
 	private JMenuItem removeElement;
@@ -97,19 +98,26 @@ public class ContextMenu extends JPopupMenu {
 		addEllipse = new JMenuItem("Ellipse shape");
 		addEllipse.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				canvasPanel.getShapesController().addShape("net.premiumrich.shapes.EllipseShape");
+				canvasPanel.getMapController().addShape("net.premiumrich.shapes.EllipseShape");
 			}
 		});
 		addMenu.add(addEllipse);
 		
 		addRectangle = new JMenuItem("Rectangle shape");
-		addRectangle.setActionCommand("Rectangle");
 		addRectangle.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				canvasPanel.getShapesController().addShape("net.premiumrich.shapes.RectangleShape");
+				canvasPanel.getMapController().addShape("net.premiumrich.shapes.RectangleShape");
 			}
 		});
 		addMenu.add(addRectangle);
+
+		addTriangle = new JMenuItem("Triangle shape");
+		addTriangle.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				canvasPanel.getMapController().addShape("net.premiumrich.shapes.TriangleShape");
+			}
+		});
+		addMenu.add(addTriangle);
 	}
 	
 	private void initEditMenu() {
@@ -120,7 +128,7 @@ public class ContextMenu extends JPopupMenu {
 		editMenu.add(removeElement);
 		removeElement.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				canvasPanel.getShapesController().removeSelectedShape();
+				canvasPanel.getMapController().removeSelectedShape();
 			}
 		});
 		
@@ -135,9 +143,8 @@ public class ContextMenu extends JPopupMenu {
 		changeBorderWidthSlider.setPaintTicks(true);
 		changeBorderWidthSlider.setPaintLabels(true);
 		changeBorderWidthSlider.addChangeListener(new ChangeListener() {
-			@Override
 			public void stateChanged(ChangeEvent e) {
-				canvasPanel.getShapesController().changeBorderWidth(changeBorderWidthSlider.getValue());
+				canvasPanel.getMapController().changeBorderWidth(changeBorderWidthSlider.getValue());
 			}
 		});
 		changeBorderWidthMenu.add(changeBorderWidthSlider);
@@ -149,8 +156,8 @@ public class ContextMenu extends JPopupMenu {
 			JMenuItem selectBorderColour = new JMenuItem(colourName);
 			selectBorderColour.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					canvasPanel.getShapesController().changeBorderColour(colours.get(colourName));
-					canvasPanel.getShapesController().setSelectedShape(null);
+					canvasPanel.getMapController().changeBorderColour(colours.get(colourName));
+					canvasPanel.getMapController().setSelectedShape(null);
 				}
 			});
 			changeBorderColourMenu.add(selectBorderColour);
@@ -165,8 +172,8 @@ public class ContextMenu extends JPopupMenu {
 			JMenuItem selectFont = new JMenuItem(fontName);
 			selectFont.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					canvasPanel.getShapesController().changeFont(fontName);
-					canvasPanel.getShapesController().setSelectedShape(null);
+					canvasPanel.getMapController().changeFont(fontName);
+					canvasPanel.getMapController().setSelectedShape(null);
 				}
 			});
 			changeFontMenu.add(selectFont);
@@ -179,8 +186,8 @@ public class ContextMenu extends JPopupMenu {
 			JMenuItem selectFontStyle = new JMenuItem(fontStyle);
 			selectFontStyle.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					canvasPanel.getShapesController().changeFontStyle(fontStyles.get(fontStyle));
-					canvasPanel.getShapesController().setSelectedShape(null);
+					canvasPanel.getMapController().changeFontStyle(fontStyles.get(fontStyle));
+					canvasPanel.getMapController().setSelectedShape(null);
 				}
 			});
 			changeFontStyleMenu.add(selectFontStyle);
@@ -203,7 +210,7 @@ public class ContextMenu extends JPopupMenu {
 			private void changeFontSize() {
 				// Parse as int if the text field only contains numbers
 				if (changeFontSizeField.getText().matches("^\\d+$")) {
-					canvasPanel.getShapesController()
+					canvasPanel.getMapController()
 									.changeFontSize(Integer.parseInt(changeFontSizeField.getText()));
 				}
 			}
@@ -217,8 +224,8 @@ public class ContextMenu extends JPopupMenu {
 			JMenuItem selectFontColour = new JMenuItem(colourName);
 			selectFontColour.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					canvasPanel.getShapesController().changeFontColour(colours.get(colourName));
-					canvasPanel.getShapesController().setSelectedShape(null);
+					canvasPanel.getMapController().changeFontColour(colours.get(colourName));
+					canvasPanel.getMapController().setSelectedShape(null);
 				}
 			});
 			changeFontColourMenu.add(selectFontColour);
@@ -232,7 +239,7 @@ public class ContextMenu extends JPopupMenu {
 		bringToFront = new JMenuItem("Bring to Front");
 		bringToFront.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				canvasPanel.getShapesController().bringSelectedShapeToFront();
+				canvasPanel.getMapController().bringSelectedShapeToFront();
 			}
 		});
 		orderMenu.add(bringToFront);
@@ -240,7 +247,7 @@ public class ContextMenu extends JPopupMenu {
 		bringForward = new JMenuItem("Bring Forward");
 		bringForward.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				canvasPanel.getShapesController().bringSelectedShapeForwards();
+				canvasPanel.getMapController().bringSelectedShapeForwards();
 			}
 		});
 		orderMenu.add(bringForward);
@@ -248,7 +255,7 @@ public class ContextMenu extends JPopupMenu {
 		sendToBack = new JMenuItem("Send to Back");
 		sendToBack.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				canvasPanel.getShapesController().sendSelectedShapeToBack();
+				canvasPanel.getMapController().sendSelectedShapeToBack();
 			}
 		});
 		orderMenu.add(sendToBack);
@@ -256,7 +263,7 @@ public class ContextMenu extends JPopupMenu {
 		sendBackward = new JMenuItem("Send Backward");
 		sendBackward.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				canvasPanel.getShapesController().sendSelectedShapeBackward();
+				canvasPanel.getMapController().sendSelectedShapeBackward();
 			}
 		});
 		orderMenu.add(sendBackward);
@@ -269,7 +276,7 @@ public class ContextMenu extends JPopupMenu {
 		removeAllConnections = new JMenuItem("Remove all connections");
 		removeAllConnections.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				canvasPanel.getShapesController().removeConnectionsFromSelectedShape();
+				canvasPanel.getMapController().removeConnectionsFromSelectedShape();
 			}
 		});
 		connectionsMenu.add(removeAllConnections);
@@ -278,9 +285,9 @@ public class ContextMenu extends JPopupMenu {
 		setShapeInConnection.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (setShapeInConnection.getText().equals("Set as origin")) {
-					canvasPanel.getShapesController().setSelectedShapeAsOrigin();
+					canvasPanel.getMapController().setSelectedShapeAsOrigin();
 				} else {
-					canvasPanel.getShapesController().setSelectedShapeAsTermination();
+					canvasPanel.getMapController().setSelectedShapeAsTermination();
 				}
 			}
 		});
@@ -295,7 +302,7 @@ public class ContextMenu extends JPopupMenu {
 			
 			// Hide "Remove all connections" button if there are no connections
 			boolean hasConnections = false;
-			for (MapLine connection : canvasPanel.getShapesController().getConnections()) {
+			for (MapLine connection : canvasPanel.getMapController().getConnections()) {
 				if (connection.getOrigin() == selectedShape || connection.getTermination() == selectedShape) {
 					hasConnections = true;
 					break;
@@ -303,15 +310,15 @@ public class ContextMenu extends JPopupMenu {
 			}
 			removeAllConnections.setEnabled(hasConnections ? true : false);
 			
-			if (canvasPanel.getShapesController().getConnectionOrigin() == null) {
+			if (canvasPanel.getMapController().getConnectionOrigin() == null) {
 				// Allow selecting as origin
 				setShapeInConnection.setEnabled(true);
 				setShapeInConnection.setForeground(Color.black);
 				setShapeInConnection.setText("Set as origin");
 			} else {
 				// Allow selecting as termination
-				if (canvasPanel.getShapesController().getSelectedShape().equals(
-							canvasPanel.getShapesController().getConnectionOrigin())) {
+				if (canvasPanel.getMapController().getSelectedShape().equals(
+							canvasPanel.getMapController().getConnectionOrigin())) {
 					setShapeInConnection.setEnabled(false);
 					setShapeInConnection.setForeground(Color.red);
 					setShapeInConnection.setText("Cannot set selected shape again");

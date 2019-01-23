@@ -19,10 +19,10 @@ import net.premiumrich.ui.CanvasPanel;
 import net.premiumrich.ui.Viewport;
 
 /**
- * The ShapesController manages and controls mind map elements
+ * The MapController manages and controls mind map elements
  * @author premiumrich
  */
-public class ShapesController {
+public class MapController {
 	
 	public Point dragStartPoint;
 	
@@ -39,7 +39,7 @@ public class ShapesController {
 	private CanvasPanel canvasPanel;
 	private Viewport viewport;
 	
-	public ShapesController(CanvasPanel canvasPanel, Viewport viewport) {
+	public MapController(CanvasPanel canvasPanel, Viewport viewport) {
 		this.canvasPanel = canvasPanel;
 		this.viewport = viewport;
 		reset();
@@ -50,7 +50,7 @@ public class ShapesController {
 		connections = new ArrayList<MapLine>();
 	}
 	
-	public void addShape(String shapeType) {
+	public void addShape(String shapeClassName) {
 		int shapeWidth = 200, shapeHeight = 100;
 		Point p = new Point();				// Point on screen to create the shape
 		if (canvasPanel.isContextTrigger) {
@@ -66,7 +66,7 @@ public class ShapesController {
 		
 		try {
 			// Create new MapShape at center of point using Java reflection
-			Class<?> newMapShapeClass = Class.forName(shapeType);
+			Class<?> newMapShapeClass = Class.forName(shapeClassName);
 			Constructor<?> newMapShapeCons = newMapShapeClass.getConstructor(
 												new Class<?>[] {int.class, int.class, int.class, int.class});
 			Object[] newMapShapeParameters = {p.x-(shapeWidth/2), p.y-(shapeHeight/2), shapeWidth, shapeHeight};
@@ -74,15 +74,12 @@ public class ShapesController {
 			
 			// Continously repaint panel when editing to display changes in the text field 
 			newMapShape.getTextField().getDocument().addDocumentListener(new DocumentListener() {
-				@Override
 				public void insertUpdate(DocumentEvent e) {
 					canvasPanel.repaint();
 				}
-				@Override
 				public void removeUpdate(DocumentEvent e) {
 					canvasPanel.repaint();
 				}
-				@Override
 				public void changedUpdate(DocumentEvent e) {
 				}
 			});
@@ -216,10 +213,8 @@ public class ShapesController {
 		cursor.y /= viewport.zoomFactor;
 		
 		List<MapShape> shapesUnderCursor = new ArrayList<MapShape>();
-		for (MapShape shape : shapes) {
-			if (shape.getShape().getBounds().contains(cursor))
-				shapesUnderCursor.add(shape);
-		}
+		for (MapShape shape : shapes)
+			if (shape.getShape().getBounds().contains(cursor)) shapesUnderCursor.add(shape);
 		return shapesUnderCursor;
 	}
 	public MapShape getSelectedShape() {
@@ -249,7 +244,7 @@ public class ShapesController {
 	}
 	public JsonArray getShapesAsJson() {
 		JsonArray shapesData = new JsonArray();
-		for (MapShape shape : canvasPanel.getShapesController().getShapes()) {
+		for (MapShape shape : canvasPanel.getMapController().getShapes()) {
 			shapesData.add(shape.getAsJsonObj());
 		}
 		return shapesData;
@@ -280,15 +275,12 @@ public class ShapesController {
 				
 				// Continously repaint panel when editing to display changes in the text field 
 				newMapShape.getTextField().getDocument().addDocumentListener(new DocumentListener() {
-					@Override
 					public void insertUpdate(DocumentEvent e) {
 						canvasPanel.repaint();
 					}
-					@Override
 					public void removeUpdate(DocumentEvent e) {
 						canvasPanel.repaint();
 					}
-					@Override
 					public void changedUpdate(DocumentEvent e) {
 					}
 				});

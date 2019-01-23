@@ -35,7 +35,6 @@ public class Viewport {
 	protected Point panStartPoint;
 	protected int panXDiff, panYDiff;
 	
-	private Timer fpsCounterUpdater;
 	private Timer debugLabelsUpdater;
 	
 	private CanvasPanel canvasPanel;
@@ -81,13 +80,13 @@ public class Viewport {
         }
 
 		// Iterate and print all lines before shapes
-		for (MapLine connection : canvasPanel.getShapesController().getConnections()) {
+		for (MapLine connection : canvasPanel.getMapController().getConnections()) {
 			connection.updateConnection();
 			g2d.setColor(Color.black);
 			g2d.setStroke(new BasicStroke(2));
 			g2d.draw(connection.getLine());
 		}
-		for (MapShape mapShape : canvasPanel.getShapesController().getShapes()) {
+		for (MapShape mapShape : canvasPanel.getMapController().getShapes()) {
 			// Fill shape background with white to hide lines within the shape
 			g2d.setColor(Color.white);
 			g2d.fill(mapShape.getShape());
@@ -105,7 +104,7 @@ public class Viewport {
 		/**
 		 * Draw text from textfield only, if not being edited, or position the textfield correctly if being edited
 		 */
-		if (! mapShape.equals(canvasPanel.getShapesController().getEditingShape())) {
+		if (! mapShape.equals(canvasPanel.getMapController().getEditingShape())) {
 			// Offset the location of text fields to center of shape
 			mapShape.getTextField().setBounds(mapShape.getX() + mapShape.getShape().getBounds().width/2 - 100 + xOffset, 
 												mapShape.getY() + mapShape.getShape().getBounds().height/2 - 50 + yOffset,
@@ -149,14 +148,14 @@ public class Viewport {
 	}
 	public void centerView() {
 		// Calculate average center
-		int numShapes = canvasPanel.getShapesController().getShapes().size();
+		int numShapes = canvasPanel.getMapController().getShapes().size();
 		int totalX = 0, totalY = 0;
-		for (MapShape shape : canvasPanel.getShapesController().getShapes()) {
+		for (MapShape shape : canvasPanel.getMapController().getShapes()) {
 			totalX += shape.getX() + shape.getShape().getBounds().getWidth()/2;
 			totalY += shape.getY() + shape.getShape().getBounds().getHeight()/2;
 		}
-		xOffset = -(totalX/numShapes - canvasPanel.getWidth()/2);
-		yOffset = -(totalY/numShapes - canvasPanel.getHeight()/2);
+		xOffset = (int)-((totalX/numShapes - canvasPanel.getWidth()/2)/zoomFactor);
+		yOffset = (int)-((totalY/numShapes - canvasPanel.getHeight()/2)/zoomFactor);
 		
 		panning = true;
 		canvasPanel.repaint();
@@ -171,21 +170,13 @@ public class Viewport {
 	}
 	
 	private void initTimers() {
-		fpsCounterUpdater = new Timer(250, new ActionListener() {
-			@Override
+		debugLabelsUpdater = new Timer(150, new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (System.currentTimeMillis() - lastFrameTime != 0)
-					PickerPanel.fpsLbl.setText("FPS: " + 1000/(System.currentTimeMillis()-lastFrameTime));
-			}
-		});
-		fpsCounterUpdater.start();
-		
-		debugLabelsUpdater = new Timer(150, new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				PickerPanel.zoomLbl.setText("Zoom: " + Double.toString(Math.round(zoomFactor*100)/100.0));
-				PickerPanel.xOffsetLbl.setText("xOffset: " + xOffset);
-				PickerPanel.yOffsetLbl.setText("yOffset: " + yOffset);
+					DebugPanel.fpsLbl.setText("FPS: " + 1000/(System.currentTimeMillis()-lastFrameTime));
+				DebugPanel.zoomLbl.setText("Zoom: " + Double.toString(Math.round(zoomFactor*100)/100.0));
+				DebugPanel.xOffsetLbl.setText("xOffset: " + xOffset);
+				DebugPanel.yOffsetLbl.setText("yOffset: " + yOffset);
 			}
 		});
 		debugLabelsUpdater.start();

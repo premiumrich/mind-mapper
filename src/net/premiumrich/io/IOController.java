@@ -30,7 +30,7 @@ public class IOController {
 	public void handleSave(File file) {
 		MindMapWriter writer = new MindMapWriter(file);
 		writer.add("Viewport", canvasPanel.getViewport().getViewportData());
-		writer.add("Shapes", canvasPanel.getShapesController().getShapesAsJson());
+		writer.add("Shapes", canvasPanel.getMapController().getShapesAsJson());
 		writer.save();
 		setCurrentFile(file);
 	}
@@ -38,7 +38,7 @@ public class IOController {
 	public void handleOpen(File file) {
 		MindMapReader reader = new MindMapReader(file);
 		canvasPanel.getViewport().setViewportData(reader.getViewportData());
-		canvasPanel.getShapesController().replaceShapesFromJson(reader.getShapesData());
+		canvasPanel.getMapController().replaceShapesFromJson(reader.getShapesData());
 		canvasPanel.repaint();
 		setCurrentFile(file);
 	}
@@ -73,7 +73,7 @@ public class IOController {
 	}
 	public void setCurrentFile(File file) {
 		currentFile = file;
-		appFrame.setOpenedFileName(file.getName().substring(0, file.getName().length() - 5));	// Truncate ".json"
+		appFrame.setAppTitle(file.getName().substring(0, file.getName().length() - 5));	// Truncate ".json"
 	}
 	
 }

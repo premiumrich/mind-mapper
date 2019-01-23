@@ -20,7 +20,7 @@ public class CanvasPanel extends JPanel {
 	public MouseEvent contextTriggerEvent;
 	
 	private Viewport viewport;
-	private ShapesController shapesCon;
+	private MapController mapCon;
 	
 	public CanvasPanel() {
 		contextMenu = new ContextMenu(this);
@@ -35,8 +35,8 @@ public class CanvasPanel extends JPanel {
 	
 	// Handle displaying context menu
 	public void popup(MouseEvent e) {
-		if (shapesCon.getShapesUnderCursor(e.getPoint()).size() > 0) {
-			contextMenu.updateMenuValues(shapesCon.getSelectedShape());
+		if (mapCon.getShapesUnderCursor(e.getPoint()).size() > 0) {
+			contextMenu.updateMenuValues(mapCon.getSelectedShape());
 			contextMenu.getEditMenu().setEnabled(true);
 			contextMenu.getOrderMenu().setEnabled(true);
 			contextMenu.getConnectionsMenu().setEnabled(true);
@@ -50,7 +50,7 @@ public class CanvasPanel extends JPanel {
 	
 	public void reset() {
 		viewport = new Viewport(this);
-		shapesCon = new ShapesController(this, viewport);
+		mapCon = new MapController(this, viewport);
 		MindMapListener mapListener = new MindMapListener(this, viewport);
 		this.addMouseListener(mapListener);
 		this.addMouseMotionListener(mapListener);
@@ -63,8 +63,8 @@ public class CanvasPanel extends JPanel {
 	public Viewport getViewport() {
 		return viewport;
 	}
-	public ShapesController getShapesController() {
-		return shapesCon;
+	public MapController getMapController() {
+		return mapCon;
 	}
 	public ContextMenu getContextMenu() {
 		return contextMenu;

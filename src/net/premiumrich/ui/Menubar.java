@@ -21,11 +21,11 @@ public class Menubar extends JMenuBar {
 	private static final long serialVersionUID = 0;
 	
 	private JMenu fileMenu;
-	private JMenuItem newItem;
-	private JMenuItem openItem;
-	private JMenuItem saveItem;
-	private JMenuItem saveAsItem;
-	private JMenuItem exportItem;
+	private JMenuItem newFile;
+	private JMenuItem open;
+	private JMenuItem save;
+	private JMenuItem saveAs;
+	private JMenuItem export;
 	private static final JFileChooser fileChooser = new JFileChooser(System.getProperty("user.home"));
 	static {
 		fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
@@ -34,24 +34,23 @@ public class Menubar extends JMenuBar {
 	private static final FileNameExtensionFilter mindMapFilter = new FileNameExtensionFilter("Mind Maps (*.json)", "json");
 	private static final FileNameExtensionFilter jpgFilter = new FileNameExtensionFilter("JPEG Image (*.jpg)", "jpg");
 	private static final FileNameExtensionFilter pngFilter = new FileNameExtensionFilter("PNG Image (*.png)", "png");
-	private JMenuItem exitItem;
+	private JMenuItem exit;
 	
 	private JMenu editMenu;
 	
 	private JMenu viewMenu;
-	private JMenuItem togglePickerPanelItem;
-	private JMenuItem zoomInItem;
-	private JMenuItem zoomOutItem;
-	private JMenuItem zoomFitItem;
-	private JMenuItem zoomResetItem;
-	private JMenuItem centerCanvasItem;
+	private JMenuItem zoomIn;
+	private JMenuItem zoomOut;
+	private JMenuItem zoomFit;
+	private JMenuItem zoomReset;
+	private JMenuItem centerCanvas;
 	
 	private JMenu windowMenu;
-	private JMenuItem minimizeWindowItem;
-	private JMenuItem maximizeWindowItem;
+	private JMenuItem togglePickerPanel;
+	private JMenuItem toggleDebugPanel;
 	
 	private JMenu helpMenu;
-	private JMenuItem quickStartGuideItem;
+	private JMenuItem openQuickStartGuide;
 	
 	private AppFrame appFrame;
 	
@@ -68,18 +67,18 @@ public class Menubar extends JMenuBar {
 		fileMenu = new JMenu("File");
 		this.add(fileMenu);
 		
-		newItem = new JMenuItem("New");
-		newItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, KeyEvent.CTRL_DOWN_MASK));
-		newItem.addActionListener(new ActionListener() {
+		newFile = new JMenuItem("New");
+		newFile.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, KeyEvent.CTRL_DOWN_MASK));
+		newFile.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
 				appFrame.getCanvasPanel().reset();
 			}
 		});
-		fileMenu.add(newItem);
+		fileMenu.add(newFile);
 		
-		openItem = new JMenuItem("Open ...");
-		openItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.CTRL_DOWN_MASK));
-		openItem.addActionListener(new ActionListener() {
+		open = new JMenuItem("Open ...");
+		open.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.CTRL_DOWN_MASK));
+		open.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
 				fileChooser.setDialogTitle("Open Mind Map");
 				fileChooser.resetChoosableFileFilters();
@@ -94,23 +93,23 @@ public class Menubar extends JMenuBar {
 				}
 			}
 		});
-		fileMenu.add(openItem);
+		fileMenu.add(open);
 		
-		saveItem = new JMenuItem("Save");
-		saveItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK));
-		saveItem.addActionListener(new ActionListener() {
+		save = new JMenuItem("Save");
+		save.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK));
+		save.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (appFrame.getIOCon().getCurrentFile() != null) {
 					appFrame.getIOCon().handleSave(appFrame.getIOCon().getCurrentFile());
 				} else
-					saveAsItem.doClick();
+					saveAs.doClick();
 			}
 		});
-		fileMenu.add(saveItem);
+		fileMenu.add(save);
 		
-		saveAsItem = new JMenuItem("Save As ...");
-		saveAsItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK));
-		saveAsItem.addActionListener(new ActionListener() {
+		saveAs = new JMenuItem("Save As ...");
+		saveAs.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK));
+		saveAs.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
 				fileChooser.setDialogTitle("Save Mind Map");
 				fileChooser.resetChoosableFileFilters();
@@ -130,12 +129,12 @@ public class Menubar extends JMenuBar {
 				}
 			}
 		});
-		fileMenu.add(saveAsItem);
+		fileMenu.add(saveAs);
 		
 		fileMenu.addSeparator();
 		
-		exportItem = new JMenuItem("Export As ...");
-		exportItem.addActionListener(new ActionListener() {
+		export = new JMenuItem("Export As ...");
+		export.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
 				fileChooser.setDialogTitle("Export Mind Map");
 				fileChooser.resetChoosableFileFilters();
@@ -166,18 +165,18 @@ public class Menubar extends JMenuBar {
 				}
 			}
 		});
-		fileMenu.add(exportItem);
+		fileMenu.add(export);
 		
 		fileMenu.addSeparator();
 		
-		exitItem = new JMenuItem("Exit");
-		exitItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, KeyEvent.CTRL_DOWN_MASK));
-		exitItem.addActionListener(new ActionListener() {
+		exit = new JMenuItem("Exit");
+		exit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, KeyEvent.CTRL_DOWN_MASK));
+		exit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
 				System.exit(0);
 			}
 		});
-		fileMenu.add(exitItem);
+		fileMenu.add(exit);
 	}
 
 	private void initEditMenu() {
@@ -189,74 +188,84 @@ public class Menubar extends JMenuBar {
 	
 	private void initViewMenu() {
 		viewMenu = new JMenu("View");
-		viewMenu.addMenuListener(new MenuListener() {
+		this.add(viewMenu);
+		
+		zoomIn = new JMenuItem("Zoom In");
+		zoomIn.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_EQUALS, KeyEvent.CTRL_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK));
+		zoomIn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent evt) {
+				appFrame.getCanvasPanel().getViewport().zoomIn();
+			}
+		});
+		viewMenu.add(zoomIn);
+		
+		zoomOut = new JMenuItem("Zoom Out");
+		zoomOut.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_MINUS, KeyEvent.CTRL_DOWN_MASK));
+		zoomOut.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent evt) {
+				appFrame.getCanvasPanel().getViewport().zoomOut();
+			}
+		});
+		viewMenu.add(zoomOut);
+		
+//		zoomFitItem
+		
+		zoomReset = new JMenuItem("Zoom 100%");
+		zoomReset.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_0, KeyEvent.CTRL_MASK));
+		zoomReset.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent evt) {
+				appFrame.getCanvasPanel().getViewport().reset();
+			}
+		});
+		viewMenu.add(zoomReset);
+		
+//		centerCanvasItem
+		centerCanvas = new JMenuItem("Center Canvas");
+		centerCanvas.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_PERIOD, KeyEvent.CTRL_MASK));
+		centerCanvas.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent evt) {
+				appFrame.getCanvasPanel().getViewport().centerView();
+			}
+		});
+		viewMenu.add(centerCanvas);
+	}
+	
+	private void initWindowMenu() {
+		windowMenu = new JMenu("Window");
+		windowMenu.addMenuListener(new MenuListener() {
 			public void menuSelected(MenuEvent evt) {
-				if (appFrame.getPickerPanel().isVisible())
-					togglePickerPanelItem.setText("Hide Picker Panel");
-				else
-					togglePickerPanelItem.setText("Show Picker Panel");
+				if (appFrame.getPickerPanel().isVisible()) togglePickerPanel.setText("Hide Picker Panel");
+				else togglePickerPanel.setText("Show Picker Panel");
+
+				if (appFrame.getDebugPanel().isVisible()) toggleDebugPanel.setText("Hide Debug Panel");
+				else toggleDebugPanel.setText("Show Debug Panel");
 			}
 			public void menuDeselected(MenuEvent evt) {
 			}
 			public void menuCanceled(MenuEvent evt) {
 			}
 		});
-		this.add(viewMenu);
-		
-		togglePickerPanelItem = new JMenuItem("", KeyEvent.VK_F12);
-		togglePickerPanelItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F12, 0));
-		togglePickerPanelItem.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent evt) {
-				if (appFrame.getPickerPanel().isVisible())
-					appFrame.getPickerPanel().setVisible(false);
-				else
-					appFrame.getPickerPanel().setVisible(true);
-			}
-		});
-		viewMenu.add(togglePickerPanelItem);
-		
-		zoomInItem = new JMenuItem("Zoom In");
-		zoomInItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_EQUALS, KeyEvent.CTRL_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK));
-		zoomInItem.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent evt) {
-				appFrame.getCanvasPanel().getViewport().zoomIn();
-			}
-		});
-		viewMenu.add(zoomInItem);
-		
-		zoomOutItem = new JMenuItem("Zoom Out");
-		zoomOutItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_MINUS, KeyEvent.CTRL_DOWN_MASK));
-		zoomOutItem.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent evt) {
-				appFrame.getCanvasPanel().getViewport().zoomOut();
-			}
-		});
-		viewMenu.add(zoomOutItem);
-		
-//		zoomFitItem
-		
-		zoomResetItem = new JMenuItem("Zoom 100%");
-		zoomResetItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_0, KeyEvent.CTRL_MASK));
-		zoomResetItem.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent evt) {
-				appFrame.getCanvasPanel().getViewport().reset();
-			}
-		});
-		viewMenu.add(zoomResetItem);
-		
-//		centerCanvasItem
-		centerCanvasItem = new JMenuItem("Center Canvas");
-		centerCanvasItem.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent evt) {
-				appFrame.getCanvasPanel().getViewport().centerView();
-			}
-		});
-		viewMenu.add(centerCanvasItem);
-	}
-	
-	private void initWindowMenu() {
-		windowMenu = new JMenu("Window");
 		this.add(windowMenu);
+
+		togglePickerPanel = new JMenuItem("", KeyEvent.VK_F12);
+		togglePickerPanel.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F12, 0));
+		togglePickerPanel.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent evt) {
+				if (appFrame.getPickerPanel().isVisible()) appFrame.getPickerPanel().setVisible(false);
+				else appFrame.getPickerPanel().setVisible(true);
+			}
+		});
+		windowMenu.add(togglePickerPanel);
+
+		toggleDebugPanel = new JMenuItem("", KeyEvent.VK_F3);
+		toggleDebugPanel.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F3, 0));
+		toggleDebugPanel.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent evt) {
+				if (appFrame.getDebugPanel().isVisible()) appFrame.getDebugPanel().setVisible(false);
+				else appFrame.getDebugPanel().setVisible(true);
+			}
+		});
+		windowMenu.add(toggleDebugPanel);
 	}
 	
 	private void initHelpMenu() {

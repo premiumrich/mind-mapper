@@ -10,7 +10,7 @@ import java.awt.event.MouseWheelListener;
 
 import javax.swing.JTextField;
 
-import net.premiumrich.shapes.ShapesController;
+import net.premiumrich.shapes.MapController;
 
 /**
  * The MindMapListener handles clicking, dragging and scrolling in the CanvasPanel
@@ -20,12 +20,12 @@ public class MindMapListener implements MouseListener, MouseMotionListener, Mous
 
 	private CanvasPanel canvasPanel;
 	private Viewport viewport;
-	private ShapesController shapeCon;
+	private MapController mapCon;
 	
 	public MindMapListener(CanvasPanel canvasPanel, Viewport viewport) {
 		this.canvasPanel = canvasPanel;
 		this.viewport = viewport;
-		this.shapeCon = canvasPanel.getShapesController();
+		this.mapCon = canvasPanel.getMapController();
 	}
 	
 	// Mouse activity listeners
@@ -44,15 +44,15 @@ public class MindMapListener implements MouseListener, MouseMotionListener, Mous
 		triggerContext(evt);
 	}
 	public void mouseDragged(MouseEvent evt) {
-		if (shapeCon.getSelectedShape() == null && !canvasPanel.isContextTrigger) {		// Pan the canvas
+		if (mapCon.getSelectedShape() == null && !canvasPanel.isContextTrigger) {		// Pan the canvas
 			viewport.pan(evt.getLocationOnScreen());
-		} else if (shapeCon.getSelectedShape() != null) {								// Drag the selected shape
+		} else if (mapCon.getSelectedShape() != null) {								// Drag the selected shape
 			Point curPoint = evt.getLocationOnScreen();
-			if (curPoint.x  != shapeCon.dragStartPoint.x || curPoint.y != shapeCon.dragStartPoint.y) {
-				shapeCon.getSelectedShape().setNewCoordinates(
-						shapeCon.getSelectedShape().getX() + (int)((curPoint.x - shapeCon.dragStartPoint.x)/viewport.zoomFactor), 
-						shapeCon.getSelectedShape().getY() + (int)((curPoint.y - shapeCon.dragStartPoint.y)/viewport.zoomFactor));
-				shapeCon.dragStartPoint = evt.getLocationOnScreen();			// Update drag diff reference
+			if (curPoint.x  != mapCon.dragStartPoint.x || curPoint.y != mapCon.dragStartPoint.y) {
+				mapCon.getSelectedShape().setNewCoordinates(				// Update coordinates
+						mapCon.getSelectedShape().getX() + (int)((curPoint.x - mapCon.dragStartPoint.x)/viewport.zoomFactor), 
+						mapCon.getSelectedShape().getY() + (int)((curPoint.y - mapCon.dragStartPoint.y)/viewport.zoomFactor));
+				mapCon.dragStartPoint = evt.getLocationOnScreen();			// Update drag diff reference
 			}
 			viewport.handleRepaint();
 		}
@@ -68,11 +68,11 @@ public class MindMapListener implements MouseListener, MouseMotionListener, Mous
 	}
 	public void mouseClicked(MouseEvent evt) {
 		// Handle double-click
-		if (evt.getClickCount() == 2 && shapeCon.getSelectedShape() != null) {
-			canvasPanel.add(shapeCon.getSelectedShape().getTextField());
-			shapeCon.setEditingShape(shapeCon.getSelectedShape());
-			shapeCon.getSelectedShape().getTextField().requestFocusInWindow();
-			shapeCon.getSelectedShape().getTextField().selectAll();
+		if (evt.getClickCount() == 2 && mapCon.getSelectedShape() != null) {
+			canvasPanel.add(mapCon.getSelectedShape().getTextField());
+			mapCon.setEditingShape(mapCon.getSelectedShape());
+			mapCon.getSelectedShape().getTextField().requestFocusInWindow();
+			mapCon.getSelectedShape().getTextField().selectAll();
 		}
 	}
 	public void mouseMoved(MouseEvent evt) {
@@ -84,17 +84,17 @@ public class MindMapListener implements MouseListener, MouseMotionListener, Mous
 	
 	private void selectShapeUnderCursor(MouseEvent evt) {
 		// Select the shape that is clicked on
-		if (shapeCon.getShapesUnderCursor(evt.getPoint()).size() > 0) {
-			shapeCon.dragStartPoint = evt.getLocationOnScreen();			// Update drag diff reference
-			if (shapeCon.shapeSelectionIndex > shapeCon.getShapesUnderCursor(evt.getPoint()).size() - 1)
-				shapeCon.shapeSelectionIndex = 0;		// Prevent index overflow by restarting cycle
-			shapeCon.setSelectedShape(shapeCon.getShapesUnderCursor(evt.getPoint()).get(shapeCon.shapeSelectionIndex));
-			shapeCon.shapeSelectionIndex++;				// Increment index to select overlapped shapes
+		if (mapCon.getShapesUnderCursor(evt.getPoint()).size() > 0) {
+			mapCon.dragStartPoint = evt.getLocationOnScreen();			// Update drag diff reference
+			if (mapCon.shapeSelectionIndex > mapCon.getShapesUnderCursor(evt.getPoint()).size() - 1)
+				mapCon.shapeSelectionIndex = 0;		// Prevent index overflow by restarting cycle
+			mapCon.setSelectedShape(mapCon.getShapesUnderCursor(evt.getPoint()).get(mapCon.shapeSelectionIndex));
+			mapCon.shapeSelectionIndex++;				// Increment index to select overlapped shapes
 		} else {	// Remove the selection
 			for (Component com : canvasPanel.getComponents())
 				if (com instanceof JTextField) canvasPanel.remove(com);		// Remove all text fields
-			shapeCon.setEditingShape(null);
-			shapeCon.setSelectedShape(null);
+			mapCon.setEditingShape(null);
+			mapCon.setSelectedShape(null);
 		}
 	}
 

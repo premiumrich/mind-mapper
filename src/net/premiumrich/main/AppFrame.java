@@ -18,13 +18,14 @@ public class AppFrame extends JFrame {
 	private static Menubar menubar;
 	private static PickerPanel pickerPanel;
 	private static CanvasPanel canvasPanel;
+	private static DebugPanel debugPanel;
 	private static IOController ioCon;
 	
 	public static final String appName = "Mind Mapper";
 	
 	public AppFrame() {
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		this.setTitle("Untitled - Mind Mapper");
+		setAppTitle(null);
 		
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		this.setBounds(50, 50, screenSize.width - 100, screenSize.height - 100);
@@ -40,20 +41,24 @@ public class AppFrame extends JFrame {
 			e.printStackTrace();
 		}
 		
-		pickerPanel = new PickerPanel();
-		this.add(pickerPanel, BorderLayout.WEST);
-		
 		canvasPanel = new CanvasPanel();
 		this.add(canvasPanel, BorderLayout.CENTER);
 		
+		pickerPanel = new PickerPanel(canvasPanel);
+		this.add(pickerPanel, BorderLayout.WEST);
+		
+		debugPanel = new DebugPanel();
+		this.add(debugPanel, BorderLayout.EAST);
+
 		ioCon = new IOController(this, canvasPanel);
 		
 		menubar = new Menubar(this);
 		this.setJMenuBar(menubar);
 	}
 	
-	public void setOpenedFileName(String fileName) {
-		this.setTitle(fileName + " - " + appName);
+	public void setAppTitle(String fileName) {
+		if (fileName == null) this.setTitle(appName);
+		else this.setTitle(fileName + " - " + appName);
 	}
 	
 	// Getters
@@ -65,6 +70,9 @@ public class AppFrame extends JFrame {
 	}
 	public PickerPanel getPickerPanel() {
 		return pickerPanel;
+	}
+	public DebugPanel getDebugPanel() {
+		return debugPanel;
 	}
 
 }
