@@ -37,6 +37,8 @@ public class AppFrame extends JFrame {
 	private void initComponents() {
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+			UIManager.put("OptionPane.background", Color.white);
+			UIManager.put("Panel.background", Color.white);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

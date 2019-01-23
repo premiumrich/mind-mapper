@@ -50,7 +50,7 @@ public class Menubar extends JMenuBar {
 	private JMenuItem toggleDebugPanel;
 	
 	private JMenu helpMenu;
-	private JMenuItem openQuickStartGuide;
+	private JMenuItem viewQuickStartGuide;
 	
 	private AppFrame appFrame;
 	
@@ -271,18 +271,25 @@ public class Menubar extends JMenuBar {
 	private void initHelpMenu() {
 		helpMenu = new JMenu("Help");
 		this.add(helpMenu);
+
+		viewQuickStartGuide = new JMenuItem("Quick Start Guide");
+		viewQuickStartGuide.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JOptionPane.showMessageDialog(appFrame, new QuickStartGuide(), "Quick Start Guide", JOptionPane.INFORMATION_MESSAGE, null);
+			}
+		});
+		helpMenu.add(viewQuickStartGuide);
 	}
 	
 	/**
-	 * 
+	 * Allow the user to select the export quality via a dialog
 	 * @return int chosen scale factor or 0 if cancelled
 	 */
 	private int showExportScalePopup() {
 		// Add choosable export qualities and calculate their final dimensions
 		String exportQualities[] = new String[5];
-		for (int i = 1; i <= exportQualities.length; i++) {
+		for (int i = 1; i <= exportQualities.length; i++)
 			exportQualities[i-1] = i +"x (" + appFrame.getCanvasPanel().getWidth()*i + "x" + appFrame.getCanvasPanel().getHeight()*i + ")";
-		}
 		// Pop up a dialog
 		String output = (String) JOptionPane.showInputDialog(fileChooser, "Image size:", "Export Options",
 									JOptionPane.PLAIN_MESSAGE, null, exportQualities, null);
