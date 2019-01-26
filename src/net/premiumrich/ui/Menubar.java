@@ -39,9 +39,9 @@ public class Menubar extends JMenuBar {
 	private JMenu editMenu;
 	
 	private JMenu viewMenu;
+	private JMenuItem toggleGrid;
 	private JMenuItem zoomIn;
 	private JMenuItem zoomOut;
-	private JMenuItem zoomFit;
 	private JMenuItem zoomReset;
 	private JMenuItem centerCanvas;
 	
@@ -188,8 +188,30 @@ public class Menubar extends JMenuBar {
 	
 	private void initViewMenu() {
 		viewMenu = new JMenu("View");
+		viewMenu.addMenuListener(new MenuListener() {
+			public void menuSelected(MenuEvent evt) {
+				if (appFrame.getCanvasPanel().getViewport().isGridVisible()) toggleGrid.setText("Hide Grid");
+				else toggleGrid.setText("Show Grid");
+			}
+			public void menuDeselected(MenuEvent evt) {
+			}
+			public void menuCanceled(MenuEvent evt) {
+			}
+		});
 		this.add(viewMenu);
 		
+		toggleGrid = new JMenuItem("", KeyEvent.VK_F4);
+		toggleGrid.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F4, 0));
+		toggleGrid.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent evt) {
+				if (appFrame.getCanvasPanel().getViewport().isGridVisible()) appFrame.getCanvasPanel().getViewport().setGridVisible(false);
+				else appFrame.getCanvasPanel().getViewport().setGridVisible(true);
+			}
+		});
+		viewMenu.add(toggleGrid);
+
+		viewMenu.addSeparator();
+
 		zoomIn = new JMenuItem("Zoom In");
 		zoomIn.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_EQUALS, KeyEvent.CTRL_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK));
 		zoomIn.addActionListener(new ActionListener() {
@@ -208,8 +230,6 @@ public class Menubar extends JMenuBar {
 		});
 		viewMenu.add(zoomOut);
 		
-//		zoomFitItem
-		
 		zoomReset = new JMenuItem("Zoom 100%");
 		zoomReset.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_0, KeyEvent.CTRL_MASK));
 		zoomReset.addActionListener(new ActionListener() {
@@ -219,7 +239,6 @@ public class Menubar extends JMenuBar {
 		});
 		viewMenu.add(zoomReset);
 		
-//		centerCanvasItem
 		centerCanvas = new JMenuItem("Center Canvas");
 		centerCanvas.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_PERIOD, KeyEvent.CTRL_MASK));
 		centerCanvas.addActionListener(new ActionListener() {
@@ -261,8 +280,13 @@ public class Menubar extends JMenuBar {
 		toggleDebugPanel.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F3, 0));
 		toggleDebugPanel.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
-				if (appFrame.getDebugPanel().isVisible()) appFrame.getDebugPanel().setVisible(false);
-				else appFrame.getDebugPanel().setVisible(true);
+				if (appFrame.getDebugPanel().isVisible()) {
+					appFrame.getDebugPanel().setVisible(false);
+					appFrame.getCanvasPanel().getViewport().debugLabelsUpdater.stop();
+				} else {
+					appFrame.getDebugPanel().setVisible(true);
+					appFrame.getCanvasPanel().getViewport().debugLabelsUpdater.start();
+				}
 			}
 		});
 		windowMenu.add(toggleDebugPanel);

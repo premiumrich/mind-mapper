@@ -3,6 +3,7 @@ package net.premiumrich.ui;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
@@ -11,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 
 import net.premiumrich.shapes.*;
@@ -22,6 +24,8 @@ public class PickerPanel extends JPanel {
 	private static final int MAX_FPS = 60;
 	private long lastFrameTime = 0;
 	
+	private static JLabel title;
+
 	private static List<MapShape> shapes;
 	private static MapShape selectedShape;
 
@@ -35,6 +39,12 @@ public class PickerPanel extends JPanel {
 		this.setBackground(Color.LIGHT_GRAY);
 		this.setBorder(new EtchedBorder(EtchedBorder.RAISED));
 		
+		title = new JLabel("Add");
+		title.setAlignmentX(JLabel.CENTER_ALIGNMENT);
+		title.setBorder(new EmptyBorder(25, 0, 0, 0));
+		title.setFont(new Font("Arial", Font.BOLD, 20));
+		this.add(title);
+
 		initShapes();
 
 		// Mouse activity listeners

@@ -4,7 +4,8 @@ import java.awt.Color;
 import java.awt.Dimension;
 
 import javax.swing.BoxLayout;
-import javax.swing.border.EmptyBorder;
+import javax.swing.border.Border;
+import javax.swing.border.EtchedBorder;
 import javax.swing.*;
 
 public class DebugPanel extends JPanel {
@@ -19,8 +20,10 @@ public class DebugPanel extends JPanel {
     public DebugPanel() {
         this.setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
         this.setPreferredSize(new Dimension(100, 0));
-        this.setBorder(new EmptyBorder(5, 5, 5, 5));
-        this.setBackground(Color.LIGHT_GRAY);
+		this.setBackground(Color.LIGHT_GRAY);
+		Border compound = BorderFactory.createEtchedBorder();
+		compound = BorderFactory.createCompoundBorder(compound, BorderFactory.createEmptyBorder(5, 5, 5, 5));
+		this.setBorder(compound);
         this.setVisible(false);
         
 		fpsLbl = new JLabel();
@@ -34,5 +37,5 @@ public class DebugPanel extends JPanel {
 		yOffsetLbl = new JLabel();
 		this.add(yOffsetLbl);
     }
-
+	
 }

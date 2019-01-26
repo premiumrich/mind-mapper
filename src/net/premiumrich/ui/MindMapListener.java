@@ -32,7 +32,7 @@ public class MindMapListener implements MouseListener, MouseMotionListener, Mous
 	public void mousePressed(MouseEvent evt) {
 		viewport.panStartPoint = evt.getLocationOnScreen();
 		viewport.setMouseReleased(false);
-		
+
 		selectShapeUnderCursor(evt);
 		triggerContext(evt);
 	}
@@ -44,9 +44,9 @@ public class MindMapListener implements MouseListener, MouseMotionListener, Mous
 		triggerContext(evt);
 	}
 	public void mouseDragged(MouseEvent evt) {
-		if (mapCon.getSelectedShape() == null && !canvasPanel.isContextTrigger) {		// Pan the canvas
+		if (mapCon.getSelectedShape() == null && !canvasPanel.isContextTrigger) {			// Pan the canvas
 			viewport.pan(evt.getLocationOnScreen());
-		} else if (mapCon.getSelectedShape() != null) {								// Drag the selected shape
+		} else if (mapCon.getSelectedShape() != null && !canvasPanel.isContextTrigger) {	// Drag the selected shape
 			Point curPoint = evt.getLocationOnScreen();
 			if (curPoint.x  != mapCon.dragStartPoint.x || curPoint.y != mapCon.dragStartPoint.y) {
 				mapCon.getSelectedShape().setNewCoordinates(				// Update coordinates

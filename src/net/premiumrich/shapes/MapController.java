@@ -59,8 +59,8 @@ public class MapController {
 			p.y = (int) ((canvasPanel.contextTriggerEvent.getY() - viewport.yOffset) / viewport.zoomFactor);
 		} else {
 			// Start from center and find vacant location
-			p.x = canvasPanel.getWidth()/2;
-			p.y = canvasPanel.getHeight()/2;
+			p.x = (int) ((canvasPanel.getWidth()/2 - viewport.xOffset) / viewport.zoomFactor);
+			p.y = (int) ((canvasPanel.getHeight()/2 - viewport.yOffset) / viewport.zoomFactor);
 			p = findVacantPoint(p);
 		}
 		

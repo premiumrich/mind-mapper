@@ -34,8 +34,16 @@ public class Viewport {
 	public int xOffset = 0, yOffset = 0;
 	protected Point panStartPoint;
 	protected int panXDiff, panYDiff;
+
+	private boolean showGrid = true;
+	private boolean gridInit = false;
+	private int gridSize = 10000;
+	private int gridMinX, gridMaxX, gridMinY, gridMaxY;
+	private int gridInterval = 25;
+	private float gridWidth = (float)0.5;
+	private float gridWidthAxes = 1;
 	
-	private Timer debugLabelsUpdater;
+	protected Timer debugLabelsUpdater;
 	
 	private CanvasPanel canvasPanel;
 	
@@ -98,6 +106,7 @@ public class Viewport {
 			// Draw text
 			drawShapeText(g, mapShape);
 		}
+		if (showGrid) drawGrid(g2d);
 	}
 
 	private void drawShapeText(Graphics g, MapShape mapShape) {
@@ -118,6 +127,33 @@ public class Viewport {
 			mapShape.getTextField().setBounds(mapShape.getX() + mapShape.getShape().getBounds().width/2 - 100, 
 												mapShape.getY() + mapShape.getShape().getBounds().height/2 - 50,
 												200, 100);
+		}
+	}
+
+	private void drawGrid(Graphics2D g2d) {
+		if (gridInit == false) {										// Init grid when panel is visible
+			initGrid(gridSize);
+			gridInit = true;
+		}
+		for (int x = gridMinX; x <= gridMaxX; x += gridInterval) {		// Draw all vertical lines
+			if (x == (gridMaxX+gridMinX)/2) {							// Draw axes darker
+				g2d.setColor(Color.gray);
+				g2d.setStroke(new BasicStroke(gridWidthAxes));
+			} else {
+				g2d.setColor(Color.lightGray);
+				g2d.setStroke(new BasicStroke(gridWidth));
+			}
+			g2d.drawLine(x, gridMinY, x, gridMaxY);
+		}
+		for (int y = gridMinY; y <= gridMaxY; y += gridInterval) {		// Draw all horizontal lines
+			if (y == (gridMaxY+gridMinY)/2) {							// Draw axes darker
+				g2d.setColor(Color.gray);
+				g2d.setStroke(new BasicStroke(gridWidthAxes));
+			} else {
+				g2d.setColor(Color.lightGray);
+				g2d.setStroke(new BasicStroke(gridWidth));
+			}
+			g2d.drawLine(gridMinX, y, gridMaxX, y);
 		}
 	}
 	
@@ -168,6 +204,17 @@ public class Viewport {
 		zooming = true;
 		canvasPanel.repaint();
 	}
+
+	/**
+	 * Initialize and center grid based on size of canvasPanel
+	 * @param size
+	 */
+	private void initGrid(int size) {
+		gridMinX = (-size) + canvasPanel.getWidth()/2;
+		gridMaxX = (size) + canvasPanel.getWidth()/2;
+		gridMinY = (-size) + canvasPanel.getHeight()/2;
+		gridMaxY = (size) + canvasPanel.getHeight()/2;
+	}
 	
 	private void initTimers() {
 		debugLabelsUpdater = new Timer(150, new ActionListener() {
@@ -186,6 +233,13 @@ public class Viewport {
 	// Getters and setters
 	public void setMouseReleased(boolean state) {
 		released = state;
+	}
+	public boolean isGridVisible() {
+		return showGrid;
+	}
+	public void setGridVisible(boolean state) {
+		showGrid = state;
+		canvasPanel.repaint();
 	}
 	public JsonObject getViewportData() {
 		JsonObject viewportData = new JsonObject();
