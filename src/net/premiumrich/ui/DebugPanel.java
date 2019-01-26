@@ -5,7 +5,6 @@ import java.awt.Dimension;
 
 import javax.swing.BoxLayout;
 import javax.swing.border.Border;
-import javax.swing.border.EtchedBorder;
 import javax.swing.*;
 
 public class DebugPanel extends JPanel {

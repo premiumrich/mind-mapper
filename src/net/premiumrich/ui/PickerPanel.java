@@ -27,7 +27,6 @@ public class PickerPanel extends JPanel {
 	private static JLabel title;
 
 	private static List<MapShape> shapes;
-	private static MapShape selectedShape;
 
 	private CanvasPanel canvasPanel;
 
@@ -50,19 +49,8 @@ public class PickerPanel extends JPanel {
 		// Mouse activity listeners
 		this.addMouseListener(new MouseAdapter() {
 			public void mousePressed(MouseEvent evt) {
-				if (getShapeUnderCursor(evt) != null) {
-					selectedShape = getShapeUnderCursor(evt);
-				}
-				// triggerContext(evt);
 			}
 			public void mouseReleased(MouseEvent evt) {
-				repaint();		// Bypass FPS limiter and force repaint to lock in position
-		
-				if (getShapeUnderCursor(evt) != null) {
-					
-				}
-
-				// triggerContext(evt);
 			}
 			public void mouseClicked(MouseEvent evt) {
 				// Handle double-click

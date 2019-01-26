@@ -41,7 +41,11 @@ public class Viewport {
 	private int gridMinX, gridMaxX, gridMinY, gridMaxY;
 	private int gridInterval = 25;
 	private float gridWidth = (float)0.5;
-	private float gridWidthAxes = 1;
+	private float gridWidthMinorAxes = 1;
+	private float gridWidthMajorAxes = 2;
+	private Color gridLines = Color.lightGray;
+	private Color gridMinorAxes = Color.lightGray;
+	private Color gridMajorAxes = Color.gray;
 	
 	protected Timer debugLabelsUpdater;
 	
@@ -52,6 +56,10 @@ public class Viewport {
 		initTimers();
 	}
 	
+	/**
+	 * Manages the scale and offset of mind map elements and their drawing process
+	 * @param g
+	 */
 	public void drawAll(Graphics g) {
 		Graphics2D g2d = (Graphics2D) g;
 		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -136,21 +144,27 @@ public class Viewport {
 			gridInit = true;
 		}
 		for (int x = gridMinX; x <= gridMaxX; x += gridInterval) {		// Draw all vertical lines
-			if (x == (gridMaxX+gridMinX)/2) {							// Draw axes darker
-				g2d.setColor(Color.gray);
-				g2d.setStroke(new BasicStroke(gridWidthAxes));
+			if (x == (gridMaxX+gridMinX)/2) {							// Draw major axes darker
+				g2d.setColor(gridMajorAxes);
+				g2d.setStroke(new BasicStroke(gridWidthMajorAxes));
+			} else if ((x-gridMaxX-gridSize) % (gridInterval*10) == 0) {
+				g2d.setColor(gridMinorAxes);
+				g2d.setStroke(new BasicStroke(gridWidthMinorAxes));
 			} else {
-				g2d.setColor(Color.lightGray);
+				g2d.setColor(gridLines);
 				g2d.setStroke(new BasicStroke(gridWidth));
 			}
 			g2d.drawLine(x, gridMinY, x, gridMaxY);
 		}
 		for (int y = gridMinY; y <= gridMaxY; y += gridInterval) {		// Draw all horizontal lines
-			if (y == (gridMaxY+gridMinY)/2) {							// Draw axes darker
-				g2d.setColor(Color.gray);
-				g2d.setStroke(new BasicStroke(gridWidthAxes));
+			if (y == (gridMaxY+gridMinY)/2) {							// Draw major axes darker
+				g2d.setColor(gridMajorAxes);
+				g2d.setStroke(new BasicStroke(gridWidthMajorAxes));
+			} else if ((y-gridMaxY-gridSize) % (gridInterval*10) == 0) {
+				g2d.setColor(gridMinorAxes);
+				g2d.setStroke(new BasicStroke(gridWidthMinorAxes));
 			} else {
-				g2d.setColor(Color.lightGray);
+				g2d.setColor(gridLines);
 				g2d.setStroke(new BasicStroke(gridWidth));
 			}
 			g2d.drawLine(gridMinX, y, gridMaxX, y);
@@ -210,10 +224,10 @@ public class Viewport {
 	 * @param size
 	 */
 	private void initGrid(int size) {
-		gridMinX = (-size) + canvasPanel.getWidth()/2;
-		gridMaxX = (size) + canvasPanel.getWidth()/2;
-		gridMinY = (-size) + canvasPanel.getHeight()/2;
-		gridMaxY = (size) + canvasPanel.getHeight()/2;
+		gridMinX = -size + canvasPanel.getWidth()/2;
+		gridMaxX = size + canvasPanel.getWidth()/2;
+		gridMinY = -size + canvasPanel.getHeight()/2;
+		gridMaxY = size + canvasPanel.getHeight()/2;
 	}
 	
 	private void initTimers() {
@@ -222,8 +236,8 @@ public class Viewport {
 				if (System.currentTimeMillis() - lastFrameTime != 0)
 					DebugPanel.fpsLbl.setText("FPS: " + 1000/(System.currentTimeMillis()-lastFrameTime));
 				DebugPanel.zoomLbl.setText("Zoom: " + Double.toString(Math.round(zoomFactor*100)/100.0));
-				DebugPanel.xOffsetLbl.setText("xOffset: " + xOffset);
-				DebugPanel.yOffsetLbl.setText("yOffset: " + yOffset);
+				DebugPanel.xOffsetLbl.setText("xOffset: " + (xOffset+panXDiff));
+				DebugPanel.yOffsetLbl.setText("yOffset: " + (yOffset+panYDiff));
 			}
 		});
 		debugLabelsUpdater.start();
