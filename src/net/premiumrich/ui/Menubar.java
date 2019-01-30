@@ -299,7 +299,7 @@ public class Menubar extends JMenuBar {
 		viewQuickStartGuide = new JMenuItem("Quick Start Guide");
 		viewQuickStartGuide.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				JOptionPane.showMessageDialog(appFrame, new QuickStartGuide(), "Quick Start Guide", JOptionPane.INFORMATION_MESSAGE, null);
+				JOptionPane.showMessageDialog(appFrame, new QuickStartGuide(), "Mind Mapper", JOptionPane.INFORMATION_MESSAGE, null);
 			}
 		});
 		helpMenu.add(viewQuickStartGuide);

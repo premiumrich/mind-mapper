@@ -15,6 +15,7 @@ import javax.swing.Timer;
 
 import com.google.gson.JsonObject;
 
+import net.premiumrich.shapes.Grid;
 import net.premiumrich.shapes.MapLine;
 import net.premiumrich.shapes.MapShape;
 
@@ -36,16 +37,9 @@ public class Viewport {
 	protected int panXDiff, panYDiff;
 
 	private boolean showGrid = true;
-	private boolean gridInit = false;
-	private int gridSize = 10000;
-	private int gridMinX, gridMaxX, gridMinY, gridMaxY;
-	private int gridInterval = 25;
-	private float gridWidth = (float)0.5;
-	private float gridWidthMinorAxes = 1;
-	private float gridWidthMajorAxes = 2;
-	private Color gridLines = Color.lightGray;
-	private Color gridMinorAxes = Color.lightGray;
-	private Color gridMajorAxes = Color.gray;
+	private boolean initGrid = false;
+	private int gridOffsetX, gridOffsetY;
+	private Grid grid;
 	
 	protected Timer debugLabelsUpdater;
 	
@@ -53,6 +47,7 @@ public class Viewport {
 	
 	public Viewport(CanvasPanel canvasPanel) {
 		this.canvasPanel = canvasPanel;
+		grid = new Grid(10000);
 		initTimers();
 	}
 	
@@ -114,7 +109,13 @@ public class Viewport {
 			// Draw text
 			drawShapeText(g, mapShape);
 		}
-		if (showGrid) drawGrid(g2d);
+		if (!initGrid) {								// Calculate new offset for grid to be centered
+			gridOffsetX = canvasPanel.getWidth()/2;		// Only run once when canvasPanel is drawn on-screen
+			gridOffsetY = canvasPanel.getHeight()/2;
+			initGrid = true;
+		}
+		g2d.translate(gridOffsetX, gridOffsetY);		// Grid is now offset by a static amount
+		if (showGrid) grid.drawGrid(g2d);
 	}
 
 	private void drawShapeText(Graphics g, MapShape mapShape) {
@@ -135,39 +136,6 @@ public class Viewport {
 			mapShape.getTextField().setBounds(mapShape.getX() + mapShape.getShape().getBounds().width/2 - 100, 
 												mapShape.getY() + mapShape.getShape().getBounds().height/2 - 50,
 												200, 100);
-		}
-	}
-
-	private void drawGrid(Graphics2D g2d) {
-		if (gridInit == false) {										// Init grid when panel is visible
-			initGrid(gridSize);
-			gridInit = true;
-		}
-		for (int x = gridMinX; x <= gridMaxX; x += gridInterval) {		// Draw all vertical lines
-			if (x == (gridMaxX+gridMinX)/2) {							// Draw major axes darker
-				g2d.setColor(gridMajorAxes);
-				g2d.setStroke(new BasicStroke(gridWidthMajorAxes));
-			} else if ((x-gridMaxX-gridSize) % (gridInterval*10) == 0) {
-				g2d.setColor(gridMinorAxes);
-				g2d.setStroke(new BasicStroke(gridWidthMinorAxes));
-			} else {
-				g2d.setColor(gridLines);
-				g2d.setStroke(new BasicStroke(gridWidth));
-			}
-			g2d.drawLine(x, gridMinY, x, gridMaxY);
-		}
-		for (int y = gridMinY; y <= gridMaxY; y += gridInterval) {		// Draw all horizontal lines
-			if (y == (gridMaxY+gridMinY)/2) {							// Draw major axes darker
-				g2d.setColor(gridMajorAxes);
-				g2d.setStroke(new BasicStroke(gridWidthMajorAxes));
-			} else if ((y-gridMaxY-gridSize) % (gridInterval*10) == 0) {
-				g2d.setColor(gridMinorAxes);
-				g2d.setStroke(new BasicStroke(gridWidthMinorAxes));
-			} else {
-				g2d.setColor(gridLines);
-				g2d.setStroke(new BasicStroke(gridWidth));
-			}
-			g2d.drawLine(gridMinX, y, gridMaxX, y);
 		}
 	}
 	
@@ -219,17 +187,6 @@ public class Viewport {
 		canvasPanel.repaint();
 	}
 
-	/**
-	 * Initialize and center grid based on size of canvasPanel
-	 * @param size
-	 */
-	private void initGrid(int size) {
-		gridMinX = -size + canvasPanel.getWidth()/2;
-		gridMaxX = size + canvasPanel.getWidth()/2;
-		gridMinY = -size + canvasPanel.getHeight()/2;
-		gridMaxY = size + canvasPanel.getHeight()/2;
-	}
-	
 	private void initTimers() {
 		debugLabelsUpdater = new Timer(150, new ActionListener() {
 			public void actionPerformed(ActionEvent e) {

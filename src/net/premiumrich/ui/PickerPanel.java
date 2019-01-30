@@ -28,11 +28,7 @@ public class PickerPanel extends JPanel {
 
 	private static List<MapShape> shapes;
 
-	private CanvasPanel canvasPanel;
-
 	public PickerPanel(CanvasPanel canvasPanel) {
-		this.canvasPanel = canvasPanel;
-
 		this.setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
 		this.setPreferredSize(new Dimension(200, 0));
 		this.setBackground(Color.LIGHT_GRAY);
