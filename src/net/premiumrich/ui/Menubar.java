@@ -270,8 +270,15 @@ public class Menubar extends JMenuBar {
 		togglePickerPanel.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F12, 0));
 		togglePickerPanel.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
-				if (appFrame.getPickerPanel().isVisible()) appFrame.getPickerPanel().setVisible(false);
-				else appFrame.getPickerPanel().setVisible(true);
+				// Dynamically change offset of viewport
+				if (appFrame.getPickerPanel().isVisible()) {
+					appFrame.getPickerPanel().setVisible(false);
+					appFrame.getCanvasPanel().getViewport().xOffset += appFrame.getPickerPanel().getWidth();
+				} else {
+					appFrame.getPickerPanel().setVisible(true);
+					appFrame.getCanvasPanel().getViewport().xOffset -= appFrame.getPickerPanel().getWidth();
+				}
+				appFrame.getCanvasPanel().repaint();
 			}
 		});
 		windowMenu.add(togglePickerPanel);

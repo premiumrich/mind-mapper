@@ -59,42 +59,32 @@ public class Viewport {
 		Graphics2D g2d = (Graphics2D) g;
 		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		
-		if (zooming) {
-			AffineTransform at = new AffineTransform();
-			
-			// Zoom relative to cursor
+		AffineTransform at = new AffineTransform();
+		if (zooming) {				// Handle zooming relative to cursor
 			double xRel = MouseInfo.getPointerInfo().getLocation().getX() - canvasPanel.getX();
 			double yRel = MouseInfo.getPointerInfo().getLocation().getY() - canvasPanel.getY();
 			double zoomDiv = zoomFactor / prevZoomFactor;
 			xOffset = (int)((zoomDiv) * (xOffset) + (1 - zoomDiv) * xRel);
 			yOffset = (int)((zoomDiv) * (yOffset) + (1 - zoomDiv) * yRel);
 			
-			at.translate(xOffset, yOffset);
-			at.scale(zoomFactor, zoomFactor);
-			g2d.transform(at);
-			
 			prevZoomFactor = zoomFactor;
 			zooming = false;
-        } else if (panning) {
-			AffineTransform at = new AffineTransform();
-			
-            at.translate(xOffset + panXDiff, yOffset + panYDiff);
-            at.scale(zoomFactor, zoomFactor);
-            g2d.transform(at);
-
-            if (released) {
-                xOffset += panXDiff;
-                yOffset += panYDiff;
-    			panXDiff = 0;
-        		panYDiff = 0;
-            }
-        }
+        }							// If released, reset pan diff
+		if (released) {
+			xOffset += panXDiff;
+			yOffset += panYDiff;
+			panXDiff = 0;
+			panYDiff = 0;
+		}
+		at.translate(xOffset + panXDiff, yOffset + panYDiff);
+		at.scale(zoomFactor, zoomFactor);
+		g2d.transform(at);
 
 		// Iterate and print all lines before shapes
 		for (MapLine connection : canvasPanel.getMapController().getConnections()) {
 			connection.updateConnection();
 			g2d.setColor(Color.black);
-			g2d.setStroke(new BasicStroke(2));
+			g2d.setStroke(connection.getStroke());
 			g2d.draw(connection.getLine());
 		}
 		for (MapShape mapShape : canvasPanel.getMapController().getShapes()) {

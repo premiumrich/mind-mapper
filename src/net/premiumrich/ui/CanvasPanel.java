@@ -51,7 +51,7 @@ public class CanvasPanel extends JPanel {
 	public void reset() {
 		viewport = new Viewport(this);
 		mapCon = new MapController(this, viewport);
-		MindMapListener mapListener = new MindMapListener(this, viewport);
+		MapListener mapListener = new MapListener(this, viewport);
 		this.addMouseListener(mapListener);
 		this.addMouseMotionListener(mapListener);
 		this.addMouseWheelListener(mapListener);

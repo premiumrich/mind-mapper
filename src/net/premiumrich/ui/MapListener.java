@@ -13,16 +13,16 @@ import javax.swing.JTextField;
 import net.premiumrich.shapes.MapController;
 
 /**
- * The MindMapListener handles clicking, dragging and scrolling in the CanvasPanel
+ * The MapListener handles clicking, dragging and scrolling in the CanvasPanel
  * @author premiumrich
  */
-public class MindMapListener implements MouseListener, MouseMotionListener, MouseWheelListener {
+public class MapListener implements MouseListener, MouseMotionListener, MouseWheelListener {
 
 	private CanvasPanel canvasPanel;
 	private Viewport viewport;
 	private MapController mapCon;
 	
-	public MindMapListener(CanvasPanel canvasPanel, Viewport viewport) {
+	public MapListener(CanvasPanel canvasPanel, Viewport viewport) {
 		this.canvasPanel = canvasPanel;
 		this.viewport = viewport;
 		this.mapCon = canvasPanel.getMapController();
