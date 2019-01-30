@@ -1,8 +1,10 @@
 package net.premiumrich.shapes;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Shape;
+import java.util.UUID;
 
 import javax.swing.JTextField;
 
@@ -10,34 +12,42 @@ import com.google.gson.JsonObject;
 
 public abstract class MapShape {
 	
+	private UUID id;
 	protected Shape shape;
 	protected int x, y;
-	private int borderWidth;
+	private BasicStroke borderStroke;
 	private Color borderColour;
 	private JTextField textField;
 	public boolean isHighlighted = false;
-	
+
 	public MapShape(Shape shape) {
+		setId(UUID.randomUUID());				// Generate new random UUID upon instantiation
 		this.shape = shape;
 		this.x = shape.getBounds().x;
 		this.y = shape.getBounds().y;
-		// Defaults
-		borderWidth = 3;
+		// Set defaults
+		borderStroke = new BasicStroke(3);
 		borderColour = Color.black;
 		textField = new JTextField("Example");
 		textField.setFont(new Font("Serif", Font.PLAIN, 12));
 		textField.setForeground(Color.black);
-		textField.setBorder(null);			// Remove border
-		textField.setOpaque(false);			// Transparent background for text field
+		textField.setBorder(null);				// Remove border
+		textField.setOpaque(false);				// Transparent background for text field
 		textField.setHorizontalAlignment(JTextField.CENTER);
 		updateTextFieldBounds();
 	}
-	
+
 	public void updateTextFieldBounds() {
 		textField.setBounds(x + shape.getBounds().width/2 - 100, y + shape.getBounds().height/2 - 50, 200, 100);
 	}
 	
 	// Getters and setters
+	public UUID getId() {
+		return id;
+	}
+	public void setId(UUID id) {
+		this.id = id;
+	}
 	public Shape getShape() {
 		return shape;
 	}
@@ -48,11 +58,11 @@ public abstract class MapShape {
 		return y;
 	}
 	public abstract void setNewCoordinates(int x, int y);	// Force subclasses (shapes) to override this
-	public int getBorderWidth() {
-		return borderWidth;
+	public BasicStroke getBorderStroke() {
+		return borderStroke;
 	}
-	public void setBorderWidth(int borderWidth) {
-		this.borderWidth = borderWidth;
+	public void setBorderStroke(BasicStroke borderStroke) {
+		this.borderStroke = borderStroke;
 	}
 	public Color getBorderColour() {
 		return borderColour;
@@ -63,14 +73,15 @@ public abstract class MapShape {
 	public JTextField getTextField() {
 		return textField;
 	}
-	public JsonObject getAsJsonObj() {
+	public JsonObject getAsJsonObject() {
 		JsonObject thisShape = new JsonObject();
+		thisShape.addProperty("ID", id.toString());
 		thisShape.addProperty("Type", this.getClass().getName());
 		thisShape.addProperty("X", x);
 		thisShape.addProperty("Y", y);
 		thisShape.addProperty("Width", shape.getBounds().width);
 		thisShape.addProperty("Height", shape.getBounds().height);
-		thisShape.addProperty("Border width", borderWidth);
+		thisShape.addProperty("Border width", borderStroke.getLineWidth());
 		thisShape.addProperty("Border colour", "#"+Integer.toHexString(borderColour.getRGB()).substring(2));
 		thisShape.addProperty("Text", textField.getText());
 		thisShape.addProperty("Text font name", textField.getFont().getName());

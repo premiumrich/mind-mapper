@@ -30,7 +30,8 @@ public class IOController {
 	public void handleSave(File file) {
 		MindMapWriter writer = new MindMapWriter(file);
 		writer.add("Viewport", canvasPanel.getViewport().getViewportData());
-		writer.add("Shapes", canvasPanel.getMapController().getShapesAsJson());
+		writer.add("Shapes", canvasPanel.getMapController().getShapesAsJsonArray());
+		writer.add("Connections", canvasPanel.getMapController().getConnectionsAsJsonArray());
 		writer.save();
 		setCurrentFile(file);
 	}
@@ -39,6 +40,7 @@ public class IOController {
 		MindMapReader reader = new MindMapReader(file);
 		canvasPanel.getViewport().setViewportData(reader.getViewportData());
 		canvasPanel.getMapController().replaceShapesFromJson(reader.getShapesData());
+		canvasPanel.getMapController().replaceConnectionsFromJson(reader.getConnectionsData());
 		canvasPanel.repaint();
 		setCurrentFile(file);
 	}

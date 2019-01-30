@@ -5,6 +5,7 @@ import java.awt.event.*;
 
 import javax.swing.*;
 
+import net.premiumrich.main.AppFrame;
 import net.premiumrich.shapes.*;
 
 /**
@@ -22,7 +23,10 @@ public class CanvasPanel extends JPanel {
 	private Viewport viewport;
 	private MapController mapCon;
 	
-	public CanvasPanel() {
+	private AppFrame appFrame;
+
+	public CanvasPanel(AppFrame appFrame) {
+		this.appFrame = appFrame;
 		contextMenu = new ContextMenu(this);
 		reset();
 	}
@@ -56,6 +60,7 @@ public class CanvasPanel extends JPanel {
 		this.addMouseMotionListener(mapListener);
 		this.addMouseWheelListener(mapListener);
 		this.setBackground(Color.white);
+		appFrame.setAppTitle(null);
 		repaint();
 	}
 	

@@ -31,7 +31,6 @@ public class Viewport {
 	private boolean zooming;
 	public double zoomFactor = 1, prevZoomFactor = 1;
 	private boolean released;
-	private boolean panning;
 	public int xOffset = 0, yOffset = 0;
 	protected Point panStartPoint;
 	protected int panXDiff, panYDiff;
@@ -94,7 +93,7 @@ public class Viewport {
 			// Draw border around shape
 			if (mapShape.isHighlighted) g2d.setColor(Color.cyan);
 			else g2d.setColor(mapShape.getBorderColour());
-			g2d.setStroke(new BasicStroke(mapShape.getBorderWidth()));
+			g2d.setStroke(mapShape.getBorderStroke());
 			g2d.draw(mapShape.getShape());
 			// Draw text
 			drawShapeText(g, mapShape);
@@ -139,7 +138,6 @@ public class Viewport {
 	
 	// Viewport controls
 	public void pan(Point curPoint) {
-		panning = true;
 		panXDiff = curPoint.x - panStartPoint.x;
 		panYDiff = curPoint.y - panStartPoint.y;
 		handleRepaint();
@@ -165,13 +163,11 @@ public class Viewport {
 		xOffset = (int)-((totalX/numShapes - canvasPanel.getWidth()/2)/zoomFactor);
 		yOffset = (int)-((totalY/numShapes - canvasPanel.getHeight()/2)/zoomFactor);
 		
-		panning = true;
 		canvasPanel.repaint();
 	}
 	public void reset() {
 		xOffset = 0; yOffset = 0;
 		zoomFactor = 1.0; prevZoomFactor = 1.0;
-		panning = true;
 		released = true;
 		zooming = true;
 		canvasPanel.repaint();
@@ -215,7 +211,6 @@ public class Viewport {
 		prevZoomFactor = canvasPanel.getViewport().zoomFactor;
 		xOffset = viewportData.get("xOffset").getAsInt();
 		yOffset = viewportData.get("yOffset").getAsInt();
-		panning = true;
 		released = true;
 	}
 	

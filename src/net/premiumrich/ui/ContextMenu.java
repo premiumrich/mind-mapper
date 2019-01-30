@@ -297,7 +297,7 @@ public class ContextMenu extends JPopupMenu {
 	public void updateMenuValues(MapShape selectedShape) {
 		if (selectedShape != null) {
 			// Update border width and font size values for the selected shape
-			changeBorderWidthSlider.setValue(selectedShape.getBorderWidth());
+			changeBorderWidthSlider.setValue((int)selectedShape.getBorderStroke().getLineWidth());
 			changeFontSizeField.setText(Integer.toString(selectedShape.getTextField().getFont().getSize()));
 			
 			// Hide "Remove all connections" button if there are no connections

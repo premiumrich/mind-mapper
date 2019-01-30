@@ -1,5 +1,6 @@
 package net.premiumrich.shapes;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Point;
@@ -7,6 +8,7 @@ import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -42,10 +44,7 @@ public class MapController {
 	public MapController(CanvasPanel canvasPanel, Viewport viewport) {
 		this.canvasPanel = canvasPanel;
 		this.viewport = viewport;
-		reset();
-	}
-	
-	public void reset() {
+		
 		shapes = new ArrayList<MapShape>();
 		connections = new ArrayList<MapLine>();
 	}
@@ -118,7 +117,7 @@ public class MapController {
 	}
 	
 	public void changeBorderWidth(int borderWidth) {
-		selectedShape.setBorderWidth(borderWidth);
+		selectedShape.setBorderStroke(new BasicStroke(borderWidth));
 		canvasPanel.repaint();
 	}
 	
@@ -242,18 +241,22 @@ public class MapController {
 	public MapShape getConnectionOrigin() {
 		return origin;
 	}
-	public JsonArray getShapesAsJson() {
+	public JsonArray getShapesAsJsonArray() {
 		JsonArray shapesData = new JsonArray();
-		for (MapShape shape : canvasPanel.getMapController().getShapes()) {
-			shapesData.add(shape.getAsJsonObj());
+		for (MapShape shape : shapes) {
+			shapesData.add(shape.getAsJsonObject());
 		}
 		return shapesData;
 	}
-	public void replaceShapes(List<MapShape> shapes) {
-		this.shapes = shapes;
+	public JsonArray getConnectionsAsJsonArray() {
+		JsonArray connectionsData = new JsonArray();
+		for (MapLine connection : connections) {
+			connectionsData.add(connection.getAsJsonObject());
+		}
+		return connectionsData;
 	}
 	public void replaceShapesFromJson(JsonArray shapesData) {
-		reset();
+		shapes = new ArrayList<MapShape>();
 		for (JsonElement shape : shapesData) {
 			JsonObject thisShape = shape.getAsJsonObject();
 			try {
@@ -265,7 +268,8 @@ public class MapController {
 										thisShape.get("Width").getAsInt(), thisShape.get("Height").getAsInt()};
 				MapShape newMapShape = (MapShape)newMapShapeCons.newInstance(newMapShapeParameters);
 				
-				newMapShape.setBorderWidth(thisShape.get("Border width").getAsInt());
+				newMapShape.setId(UUID.fromString(thisShape.get("ID").getAsString()));
+				newMapShape.setBorderStroke(new BasicStroke(thisShape.get("Border width").getAsInt()));
 				newMapShape.setBorderColour(Color.decode(thisShape.get("Border colour").getAsString()));
 				newMapShape.getTextField().setText(thisShape.get("Text").getAsString());
 				newMapShape.getTextField().setFont(new Font(thisShape.get("Text font name").getAsString(), 
@@ -289,6 +293,23 @@ public class MapController {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
+		}
+	}
+	public void replaceConnectionsFromJson(JsonArray connectionsData) {
+		connections = new ArrayList<MapLine>();
+		for (JsonElement connection : connectionsData) {
+			JsonObject thisConnection = connection.getAsJsonObject();
+			MapShape origin = null, termination = null;
+			for (MapShape shape : shapes) {
+				if (shape.getId().equals(UUID.fromString(thisConnection.get("Origin ID").getAsString()))) {
+					origin = shape;
+				}
+				if (shape.getId().equals(UUID.fromString(thisConnection.get("Termination ID").getAsString()))) {
+					termination = shape;
+				}
+				if (origin != null && termination != null) break;		// Break early if connection found
+			}
+			if (origin != null && termination != null) connections.add(new MapLine(origin, termination));
 		}
 	}
 	

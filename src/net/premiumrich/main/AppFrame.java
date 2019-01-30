@@ -43,7 +43,7 @@ public class AppFrame extends JFrame {
 			e.printStackTrace();
 		}
 		
-		canvasPanel = new CanvasPanel();
+		canvasPanel = new CanvasPanel(this);
 		this.add(canvasPanel, BorderLayout.CENTER);
 		
 		pickerPanel = new PickerPanel(canvasPanel);

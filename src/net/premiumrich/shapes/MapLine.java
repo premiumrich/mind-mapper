@@ -2,7 +2,6 @@ package net.premiumrich.shapes;
 
 import java.awt.BasicStroke;
 import java.awt.Point;
-import java.awt.Stroke;
 import java.awt.geom.Line2D;
 
 import com.google.gson.JsonObject;
@@ -10,7 +9,7 @@ import com.google.gson.JsonObject;
 public class MapLine {
 
 	private Line2D line;
-	private Stroke stroke;
+	private BasicStroke stroke;
 
 	private MapShape origin;
 	private MapShape termination;
@@ -33,7 +32,7 @@ public class MapLine {
 	}
 	
 	// Getters
-	public Stroke getStroke() {
+	public BasicStroke getStroke() {
 		return stroke;
 	}
 	public MapShape getOrigin() {
@@ -44,6 +43,13 @@ public class MapLine {
 	}
 	public Line2D getLine() {
 		return line;
+	}
+	public JsonObject getAsJsonObject() {
+		JsonObject thisConnection = new JsonObject();
+		thisConnection.addProperty("Stroke width", stroke.getLineWidth());
+		thisConnection.addProperty("Origin ID", origin.getId().toString());
+		thisConnection.addProperty("Termination ID", termination.getId().toString());
+		return thisConnection;
 	}
 	
 }

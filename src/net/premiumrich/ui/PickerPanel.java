@@ -91,7 +91,7 @@ public class PickerPanel extends JPanel {
 			// Draw border around shape
 			if (mapShape.isHighlighted) g2d.setColor(Color.cyan);
 			else g2d.setColor(mapShape.getBorderColour());
-			g2d.setStroke(new BasicStroke(mapShape.getBorderWidth()));
+			g2d.setStroke(mapShape.getBorderStroke());
 			g2d.draw(mapShape.getShape());
 		}
 	}

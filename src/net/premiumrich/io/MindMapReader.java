@@ -25,8 +25,10 @@ public class MindMapReader {
 	public JsonObject getViewportData() {
 		return data.get("Viewport").getAsJsonObject();
 	}
-	
 	public JsonArray getShapesData() {
 		return data.get("Shapes").getAsJsonArray();
+	}
+	public JsonArray getConnectionsData() {
+		return data.get("Connections").getAsJsonArray();
 	}
 }
