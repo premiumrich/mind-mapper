@@ -102,8 +102,11 @@ public class Viewport {
 			gridOffsetY = canvasPanel.getHeight()/2;
 			initGrid = true;
 		}
-		g2d.translate(gridOffsetX, gridOffsetY);		// Grid is now offset by a static amount
-		if (showGrid) grid.drawGrid(g2d);
+		if (showGrid) {
+			Graphics2D gridG2d = (Graphics2D) g2d.create();
+			gridG2d.translate(gridOffsetX, gridOffsetY);		// Grid is now offset by a static amount
+			grid.drawGrid(gridG2d);
+		}
 	}
 
 	private void drawShapeText(Graphics g, MapShape mapShape) {
