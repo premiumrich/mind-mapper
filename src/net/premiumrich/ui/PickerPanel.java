@@ -1,6 +1,5 @@
 package net.premiumrich.ui;
 
-import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;

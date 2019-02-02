@@ -11,10 +11,10 @@ public class DebugPanel extends JPanel {
 
     private static final long serialVersionUID = 0;
     
-	static JLabel fpsLbl;
-	static JLabel zoomLbl;
-	static JLabel xOffsetLbl;
-	static JLabel yOffsetLbl;
+	protected static JLabel fpsLbl;
+	protected static JLabel zoomLbl;
+	protected static JLabel xOffsetLbl;
+	protected static JLabel yOffsetLbl;
 
     public DebugPanel() {
         this.setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
