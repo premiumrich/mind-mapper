@@ -1,11 +1,11 @@
-package net.premiumrich.main;
+package gvf121.main;
 
 import java.awt.*;
 
 import javax.swing.*;
 
-import net.premiumrich.io.IOController;
-import net.premiumrich.ui.*;
+import gvf121.io.IOController;
+import gvf121.ui.*;
 
 /**
  * The AppFrame constructs and manages the main frame

@@ -1,4 +1,4 @@
-package net.premiumrich.shapes;
+package gvf121.shapes;
 
 import java.awt.BasicStroke;
 import java.awt.Point;

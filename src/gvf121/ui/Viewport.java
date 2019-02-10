@@ -1,4 +1,4 @@
-package net.premiumrich.ui;
+package gvf121.ui;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -14,9 +14,9 @@ import javax.swing.Timer;
 
 import com.google.gson.JsonObject;
 
-import net.premiumrich.shapes.Grid;
-import net.premiumrich.shapes.MapLine;
-import net.premiumrich.shapes.MapShape;
+import gvf121.shapes.Grid;
+import gvf121.shapes.MapLine;
+import gvf121.shapes.MapShape;
 
 /**
  * The Viewport manages and handles drawing mind map elements

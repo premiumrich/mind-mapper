@@ -1,4 +1,4 @@
-package net.premiumrich.shapes;
+package gvf121.shapes;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -17,8 +17,8 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import net.premiumrich.ui.CanvasPanel;
-import net.premiumrich.ui.Viewport;
+import gvf121.ui.CanvasPanel;
+import gvf121.ui.Viewport;
 
 /**
  * The MapController manages and controls mind map elements

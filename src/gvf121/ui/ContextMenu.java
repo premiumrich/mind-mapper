@@ -1,4 +1,4 @@
-package net.premiumrich.ui;
+package gvf121.ui;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -14,8 +14,8 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-import net.premiumrich.shapes.MapLine;
-import net.premiumrich.shapes.MapShape;
+import gvf121.shapes.MapLine;
+import gvf121.shapes.MapShape;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -98,7 +98,7 @@ public class ContextMenu extends JPopupMenu {
 		addEllipse = new JMenuItem("Ellipse shape");
 		addEllipse.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				canvasPanel.getMapController().addShape("net.premiumrich.shapes.EllipseShape");
+				canvasPanel.getMapController().addShape("gvf121.shapes.EllipseShape");
 			}
 		});
 		addMenu.add(addEllipse);
@@ -106,7 +106,7 @@ public class ContextMenu extends JPopupMenu {
 		addRectangle = new JMenuItem("Rectangle shape");
 		addRectangle.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				canvasPanel.getMapController().addShape("net.premiumrich.shapes.RectangleShape");
+				canvasPanel.getMapController().addShape("gvf121.shapes.RectangleShape");
 			}
 		});
 		addMenu.add(addRectangle);
@@ -114,7 +114,7 @@ public class ContextMenu extends JPopupMenu {
 		addTriangle = new JMenuItem("Triangle shape");
 		addTriangle.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				canvasPanel.getMapController().addShape("net.premiumrich.shapes.TriangleShape");
+				canvasPanel.getMapController().addShape("gvf121.shapes.TriangleShape");
 			}
 		});
 		addMenu.add(addTriangle);

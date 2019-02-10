@@ -1,4 +1,4 @@
-package net.premiumrich.shapes;
+package gvf121.shapes;
 
 import java.awt.Shape;
 import java.awt.geom.Path2D;

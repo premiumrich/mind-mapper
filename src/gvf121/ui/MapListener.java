@@ -1,4 +1,4 @@
-package net.premiumrich.ui;
+package gvf121.ui;
 
 import java.awt.Component;
 import java.awt.Point;
@@ -10,7 +10,7 @@ import java.awt.event.MouseWheelListener;
 
 import javax.swing.JTextField;
 
-import net.premiumrich.shapes.MapController;
+import gvf121.shapes.MapController;
 
 /**
  * The MapListener handles clicking, dragging and scrolling in the CanvasPanel

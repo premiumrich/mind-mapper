@@ -1,4 +1,4 @@
-package net.premiumrich.main;
+package gvf121.main;
 
 import java.awt.EventQueue;
 

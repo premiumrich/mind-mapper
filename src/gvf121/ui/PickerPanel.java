@@ -1,4 +1,4 @@
-package net.premiumrich.ui;
+package gvf121.ui;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -14,7 +14,7 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 
-import net.premiumrich.shapes.*;
+import gvf121.shapes.*;
 
 public class PickerPanel extends JPanel {
 

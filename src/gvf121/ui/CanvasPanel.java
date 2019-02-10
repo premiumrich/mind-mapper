@@ -1,12 +1,12 @@
-package net.premiumrich.ui;
+package gvf121.ui;
 
 import java.awt.*;
 import java.awt.event.*;
 
 import javax.swing.*;
 
-import net.premiumrich.main.AppFrame;
-import net.premiumrich.shapes.*;
+import gvf121.main.AppFrame;
+import gvf121.shapes.*;
 
 /**
  * The CanvasPanel controls all mind map elements and listeners

@@ -1,4 +1,4 @@
-package net.premiumrich.ui;
+package gvf121.ui;
 
 import java.awt.Color;
 import java.awt.Dimension;

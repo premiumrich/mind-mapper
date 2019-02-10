@@ -1,4 +1,4 @@
-package net.premiumrich.ui;
+package gvf121.ui;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -10,7 +10,7 @@ import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import net.premiumrich.main.AppFrame;
+import gvf121.main.AppFrame;
 
 /**
  * The Menubar manages the menu bar and handles actions, including the open, save and export dialogs

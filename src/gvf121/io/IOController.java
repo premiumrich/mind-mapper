@@ -1,4 +1,4 @@
-package net.premiumrich.io;
+package gvf121.io;
 
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
@@ -16,8 +16,8 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.stream.JsonReader;
 
-import net.premiumrich.main.AppFrame;
-import net.premiumrich.ui.CanvasPanel;
+import gvf121.main.AppFrame;
+import gvf121.ui.CanvasPanel;
 
 /**
  * The IOController handles the opening, saving and exporting of mind maps 
