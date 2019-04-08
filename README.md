@@ -1,9 +1,16 @@
 # Mind Mapper
-IB May 2019 Computer Science HL Internal Assessment
+
+IB Computer Science HL Internal Assessment  
+May 2019 Session
+
+## [Cover page](https://yangrichard.com/mind-mapper/cover_page.html)
 
 ## Grading results
-*TBA*
+
+**33/34 (IB 7)**  
+*This IA was sent for moderation.*
 
 ## Disclaimer
+
 *Although I chose to license this program under MIT, it does not grant permission for plagiarism!*
-*Please use this code as inspiration for implementation only.*
+*Please use the code as inspiration for implementation only.*
